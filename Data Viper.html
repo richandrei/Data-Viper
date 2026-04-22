@@ -951,175 +951,21 @@ function onDataReady() {
  * STUDENT 1 TODO — loadDataset()
  *
  * PURPOSE: Load RAW_DATA into window.DS and trigger the rest of the app.
- *
- * STEPS:
- *  1. Assign RAW_DATA to window.DS (a copy is fine: [...RAW_DATA])
- *  2. Call renderTable(window.DS) to populate the HTML table
- *  3. Call onDataReady() so Students 2 & 3 can initialize their sections
- *  4. Update #rowCount with the total number of rows
  */
 function loadDataset() {
-  // TODO: Implement this function
-  // Hint: window.DS = [...RAW_DATA];
-  // Hint: renderTable(window.DS);
-  // Hint: document.getElementById('rowCount').textContent = window.DS.length + ' rows';
-  // Hint: onDataReady();
+  try {
+    // Defensive copy so sorting/filtering never mutates RAW_DATA
+    window.DS = Array.isArray(RAW_DATA) ? RAW_DATA.map(r => ({ ...r })) : [];
 
-  console.warn("⚠ Student 1: loadDataset() is not yet implemented.");
+    renderTable(window.DS); // renderTable also updates row count
+    onDataReady();          // trigger Student 2/3 sections
+  } catch (err) {
+    console.error("loadDataset() failed:", err);
+    window.DS = [];
+    renderTable(window.DS);
+  }
 }
 
-/**
- * STUDENT 1 TODO — renderTable(data)
- *
- * PURPOSE: Dynamically build and insert table rows into #tableBody.
- *
- * @param {Array} data - Array of student objects from RAW_DATA
- *
- * STEPS:
- *  1. Clear #tableBody
- *  2. If data is empty, show a "No results found" row
- *  3. For each student object, create a <tr> with <td> cells for every column
- *  4. Apply CSS classes: 'numeric' to number cells, 'grade-A/B/C/D' to grade cells
- *  5. Format booleans: job=true → "Yes", job=false → "No"
- *
- * EXAMPLE ROW FORMAT:
- *  <tr>
- *    <td>1</td>
- *    <td>Ana Reyes</td>
- *    <td class="numeric">18</td>
- *    ...
- *    <td class="grade-A">A</td>
- *  </tr>
- */
-function renderTable(data) {
-  // TODO: Implement this function
-  console.warn("⚠ Student 1: renderTable() is not yet implemented.");
-}
-
-/**
- * STUDENT 1 TODO — applyFilterSort()
- *
- * PURPOSE: Filter by name and sort by selected column, then re-render.
- *
- * STEPS:
- *  1. Read the value from #filterInput (case-insensitive name filter)
- *  2. Read the selected option from #sortSelect
- *  3. Filter window.DS by name, then sort the result
- *  4. Call renderTable(filtered + sorted data)
- *  5. Update #rowCount
- *
- * SORT KEYS match the property names in RAW_DATA:
- *  'name' → alphabetical, others → numeric descending
- */
-function applyFilterSort() {
-  // TODO: Implement this function
-  console.warn("⚠ Student 1: applyFilterSort() is not yet implemented.");
-}
-
-/**
- * STUDENT 1 TODO — resetTable()
- *
- * PURPOSE: Clear filters and restore original table.
- *
- * STEPS:
- *  1. Clear #filterInput value
- *  2. Reset #sortSelect to ""
- *  3. Call renderTable(window.DS) to restore full dataset
- *  4. Update #rowCount
- */
-function resetTable() {
-  // TODO: Implement this function
-  console.warn("⚠ Student 1: resetTable() is not yet implemented.");
-}
-
-/* Student 1 entry point — runs when DOM is ready */
-document.addEventListener('DOMContentLoaded', () => {
-  loadDataset(); // TODO: This call is already here — just implement the function above
-});
-
-
-/* ═══════════════════════════════════════════════════════════════════
-   ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗
-   ██║   ██║██║██╔════╝██║   ██║██╔══██╗██║     ██║╚════██╗
-   ██║   ██║██║███████╗██║   ██║███████║██║     ██║    ██╔╝
-   ╚██╗ ██╔╝██║╚════██║██║   ██║██╔══██║██║     ██║   ██╔╝
-    ╚████╔╝ ██║███████║╚██████╔╝██║  ██║███████╗██║   ██║
-     ╚═══╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝
-
-   STUDENT 2 — VISUALIZATION LAYER (branch: feature/visualization)
-═══════════════════════════════════════════════════════════════════ */
-
-/**
- * STUDENT 2 TODO — initCharts()
- *
- * PURPOSE: Entry point. Called from onDataReady() after data is loaded.
- * Call all four draw functions here, passing window.DS.
- *
- * IMPORTANT: Destroy any existing Chart instance before creating a new one.
- * Use window.CHARTS to track instances:
- *   if (window.CHARTS['barChart']) window.CHARTS['barChart'].destroy();
- */
-function initCharts() {
-  // TODO: Call all four chart functions here
-  // drawBarChart('barChart', window.DS);
-  // drawScatterPlot('scatterChart', window.DS);
-  // drawHistogram('histChart', window.DS);
-  // drawPieChart('pieChart', window.DS);
-
-  console.warn("⚠ Student 2: initCharts() is not yet implemented.");
-}
-
-/**
- * STUDENT 2 TODO — drawBarChart(canvasId, data)
- *
- * PURPOSE: Bar chart — Study Hours per student on x-axis, Final Score on y-axis.
- *
- * @param {string} canvasId - 'barChart'
- * @param {Array}  data     - window.DS array
- *
- * CHART.JS GUIDE:
- *  const ctx = document.getElementById(canvasId).getContext('2d');
- *  new Chart(ctx, { type: 'bar', data: { labels: [...], datasets: [{ data: [...] }] } });
- *
- * VISUAL REQUIREMENTS:
- *  - Labels = student first names (split on space, take index 0)
- *  - Bars colored with the amber accent (#f0b429) at 80% opacity
- *  - X-axis: Study Hours (numeric, sort data by studyHours ascending first)
- *  - Y-axis: Final Score (0–100)
- *  - Enable the legend and tooltip
- */
-function drawBarChart(canvasId, data) {
-  // TODO: Implement this function
-  // After implementing, show the canvas:
-  // document.getElementById('barPlaceholder').style.display = 'none';
-  // document.getElementById(canvasId).style.display = 'block';
-
-  console.warn("⚠ Student 2: drawBarChart() is not yet implemented.");
-}
-
-/**
- * STUDENT 2 TODO — drawScatterPlot(canvasId, data)
- *
- * PURPOSE: Scatter plot — Attendance % (x) vs Final Score (y).
- *          Each point represents one student.
- *
- * @param {string} canvasId - 'scatterChart'
- * @param {Array}  data     - window.DS array
- *
- * VISUAL REQUIREMENTS:
- *  - Point data format: { x: attendance, y: score }
- *  - Color points teal (#3ecfcf)
- *  - Show student name in the tooltip (use tooltip callback)
- *  - Draw a simple linear regression line as a second dataset (optional bonus)
- */
-function drawScatterPlot(canvasId, data) {
-  // TODO: Implement this function
-  // After implementing, show the canvas:
-  // document.getElementById('scatterPlaceholder').style.display = 'none';
-  // document.getElementById(canvasId).style.display = 'block';
-
-  console.warn("⚠ Student 2: drawScatterPlot() is not yet implemented.");
-}
 
 /**
  * STUDENT 2 TODO — drawHistogram(canvasId, data)
