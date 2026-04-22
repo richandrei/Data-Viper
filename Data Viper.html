@@ -1121,6 +1121,21 @@ function applyFilterSort() {
   renderTable(result);
 }
 
+/**
+ * STUDENT 1 TODO — resetTable()
+ *
+ * PURPOSE: Clear filters and restore original table.
+ */
+function resetTable() {
+  const filterEl = document.getElementById("filterInput");
+  const sortEl = document.getElementById("sortSelect");
+
+  if (filterEl) filterEl.value = "";
+  if (sortEl) sortEl.value = "";
+
+  renderTable(Array.isArray(window.DS) ? window.DS : []);
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗
    ██║   ██║██║██╔════╝██║   ██║██╔══██╗██║     ██║╚════██╗
