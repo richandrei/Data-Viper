@@ -966,6 +966,178 @@ function loadDataset() {
   }
 }
 
+/**
+ * STUDENT 1 TODO — renderTable(data)
+ *
+ * PURPOSE: Dynamically build and insert table rows into #tableBody.
+ */
+function renderTable(data) {
+  const tbody = document.getElementById("tableBody");
+  const rowCountEl = document.getElementById("rowCount");
+
+  const safeData = Array.isArray(data) ? data : [];
+  if (!tbody) {
+    console.error("renderTable(): #tableBody not found in DOM.");
+    return;
+  }
+
+  // Clear existing rows
+  tbody.textContent = "";
+
+  // Update row count (always kept in sync with current rendered view)
+  if (rowCountEl) rowCountEl.textContent = `${safeData.length} rows`;
+
+  // Empty state
+  if (safeData.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 10;
+    td.style.textAlign = "center";
+    td.style.color = "var(--text-dim)";
+    td.style.fontFamily = "var(--mono)";
+    td.style.padding = "40px";
+    td.textContent = "No results found.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
+
+  // Column definitions match the existing table header order
+  const cols = [
+    { key: "__index", label: "#" },
+    { key: "name", label: "Student Name" },
+    { key: "studyHours", label: "Study Hours/Week", numeric: true },
+    { key: "attendance", label: "Attendance %", numeric: true },
+    { key: "midterm", label: "Midterm Score", numeric: true },
+    { key: "score", label: "Final Score", numeric: true },
+    { key: "assignments", label: "Assignments Done", numeric: true },
+    { key: "sleep", label: "Sleep Hrs/Night", numeric: true },
+    { key: "job", label: "Part-time Job" },
+    { key: "grade", label: "Grade", grade: true }
+  ];
+
+  const frag = document.createDocumentFragment();
+
+  safeData.forEach((row, idx) => {
+    const tr = document.createElement("tr");
+
+    cols.forEach(col => {
+      const td = document.createElement("td");
+
+      let val;
+      if (col.key === "__index") {
+        val = idx + 1;
+      } else {
+        val = row?.[col.key];
+      }
+
+      // Formatting rules
+      if (col.key === "job") {
+        td.textContent = val === true ? "Yes" : (val === false ? "No" : "—");
+      } else if (col.grade) {
+        const g = (val ?? "").toString().trim().toUpperCase();
+        td.textContent = g || "—";
+        if (g) td.classList.add(`grade-${g}`); // grade-A/B/C/D
+      } else {
+        td.textContent = (val === null || val === undefined || val === "")
+          ? "—"
+          : String(val);
+      }
+
+      // Numeric styling
+      if (col.numeric) td.classList.add("numeric");
+
+      tr.appendChild(td);
+    });
+
+    frag.appendChild(tr);
+  });
+
+  tbody.appendChild(frag);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗
+   ██║   ██║██║██╔════╝██║   ██║██╔══██╗██║     ██║╚════██╗
+   ██║   ██║██║███████╗██║   ██║███████║██║     ██║    ██╔╝
+   ╚██╗ ██╔╝██║╚════██║██║   ██║██╔══██║██║     ██║   ██╔╝
+    ╚████╔╝ ██║███████║╚██████╔╝██║  ██║███████╗██║   ██║
+     ╚═══╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝
+
+   STUDENT 2 — VISUALIZATION LAYER (branch: feature/visualization)
+═══════════════════════════════════════════════════════════════════ */
+
+/**
+ * STUDENT 2 TODO — initCharts()
+ *
+ * PURPOSE: Entry point. Called from onDataReady() after data is loaded.
+ * Call all four draw functions here, passing window.DS.
+ *
+ * IMPORTANT: Destroy any existing Chart instance before creating a new one.
+ * Use window.CHARTS to track instances:
+ *   if (window.CHARTS['barChart']) window.CHARTS['barChart'].destroy();
+ */
+function initCharts() {
+  // TODO: Call all four chart functions here
+  // drawBarChart('barChart', window.DS);
+  // drawScatterPlot('scatterChart', window.DS);
+  // drawHistogram('histChart', window.DS);
+  // drawPieChart('pieChart', window.DS);
+
+  console.warn("⚠ Student 2: initCharts() is not yet implemented.");
+}
+
+/**
+ * STUDENT 2 TODO — drawBarChart(canvasId, data)
+ *
+ * PURPOSE: Bar chart — Study Hours per student on x-axis, Final Score on y-axis.
+ *
+ * @param {string} canvasId - 'barChart'
+ * @param {Array}  data     - window.DS array
+ *
+ * CHART.JS GUIDE:
+ *  const ctx = document.getElementById(canvasId).getContext('2d');
+ *  new Chart(ctx, { type: 'bar', data: { labels: [...], datasets: [{ data: [...] }] } });
+ *
+ * VISUAL REQUIREMENTS:
+ *  - Labels = student first names (split on space, take index 0)
+ *  - Bars colored with the amber accent (#f0b429) at 80% opacity
+ *  - X-axis: Study Hours (numeric, sort data by studyHours ascending first)
+ *  - Y-axis: Final Score (0–100)
+ *  - Enable the legend and tooltip
+ */
+function drawBarChart(canvasId, data) {
+  // TODO: Implement this function
+  // After implementing, show the canvas:
+  // document.getElementById('barPlaceholder').style.display = 'none';
+  // document.getElementById(canvasId).style.display = 'block';
+
+  console.warn("⚠ Student 2: drawBarChart() is not yet implemented.");
+}
+
+/**
+ * STUDENT 2 TODO — drawScatterPlot(canvasId, data)
+ *
+ * PURPOSE: Scatter plot — Attendance % (x) vs Final Score (y).
+ *          Each point represents one student.
+ *
+ * @param {string} canvasId - 'scatterChart'
+ * @param {Array}  data     - window.DS array
+ *
+ * VISUAL REQUIREMENTS:
+ *  - Point data format: { x: attendance, y: score }
+ *  - Color points teal (#3ecfcf)
+ *  - Show student name in the tooltip (use tooltip callback)
+ *  - Draw a simple linear regression line as a second dataset (optional bonus)
+ */
+function drawScatterPlot(canvasId, data) {
+  // TODO: Implement this function
+  // After implementing, show the canvas:
+  // document.getElementById('scatterPlaceholder').style.display = 'none';
+  // document.getElementById(canvasId).style.display = 'block';
+
+  console.warn("⚠ Student 2: drawScatterPlot() is not yet implemented.");
+}
 
 /**
  * STUDENT 2 TODO — drawHistogram(canvasId, data)
