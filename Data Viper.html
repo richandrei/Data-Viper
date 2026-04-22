@@ -1136,6 +1136,32 @@ function resetTable() {
   renderTable(Array.isArray(window.DS) ? window.DS : []);
 }
 
+/**
+ * (Student 1) Optional but recommended: wire controls for better UX
+ * - Enter key in filter box triggers Apply
+ * - Changing sort dropdown triggers Apply
+ */
+function wireDatasetControls() {
+  const filterEl = document.getElementById("filterInput");
+  const sortEl = document.getElementById("sortSelect");
+
+  if (filterEl) {
+    filterEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") applyFilterSort();
+    });
+  }
+
+  if (sortEl) {
+    sortEl.addEventListener("change", () => applyFilterSort());
+  }
+}
+
+/* Student 1 entry point — runs when DOM is ready */
+document.addEventListener("DOMContentLoaded", () => {
+  wireDatasetControls();
+  loadDataset();
+});
+
 /* ═══════════════════════════════════════════════════════════════════
    ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗
    ██║   ██║██║██╔════╝██║   ██║██╔══██╗██║     ██║╚════██╗
