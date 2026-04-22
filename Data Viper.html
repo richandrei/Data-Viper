@@ -1056,6 +1056,71 @@ function renderTable(data) {
   tbody.appendChild(frag);
 }
 
+
+/**
+ * STUDENT 1 TODO — applyFilterSort()
+ *
+ * PURPOSE: Filter by name and sort by selected column, then re-render.
+ */
+function applyFilterSort() {
+  const filterEl = document.getElementById("filterInput");
+  const sortEl = document.getElementById("sortSelect");
+
+  const filterText = (filterEl?.value ?? "").trim().toLowerCase();
+  const sortKey = (sortEl?.value ?? "").trim();
+
+  const base = Array.isArray(window.DS) ? window.DS : [];
+
+  // 1) Filter by name (case-insensitive substring)
+  let result = base;
+  if (filterText) {
+    result = base.filter(d => (d?.name ?? "").toLowerCase().includes(filterText));
+  }
+
+  // 2) Sort (do not mutate result in-place without copying)
+  if (sortKey) {
+    const copy = [...result];
+
+    // Grade order: A best → D worst
+    const gradeRank = { A: 1, B: 2, C: 3, D: 4 };
+
+    copy.sort((a, b) => {
+      const av = a?.[sortKey];
+      const bv = b?.[sortKey];
+
+      // Name: alphabetical ascending
+      if (sortKey === "name") {
+        return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
+      }
+
+      // Grade: A, B, C, D ascending by rank
+      if (sortKey === "grade") {
+        const ar = gradeRank[String(av ?? "").toUpperCase()] ?? 999;
+        const br = gradeRank[String(bv ?? "").toUpperCase()] ?? 999;
+        return ar - br;
+      }
+
+      // Numeric (default): descending
+      const an = Number(av);
+      const bn = Number(bv);
+
+      const aIsNum = Number.isFinite(an);
+      const bIsNum = Number.isFinite(bn);
+
+      if (aIsNum && bIsNum) return bn - an;
+      if (aIsNum && !bIsNum) return -1;
+      if (!aIsNum && bIsNum) return 1;
+
+      // Fallback: string compare ascending
+      return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
+    });
+
+    result = copy;
+  }
+
+  renderTable(result);
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗
    ██║   ██║██║██╔════╝██║   ██║██╔══██╗██║     ██║╚════██╗
