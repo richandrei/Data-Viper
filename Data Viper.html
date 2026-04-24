@@ -1026,12 +1026,8 @@ function resetTable() {
 
 /* Student 1 entry point — runs when DOM is ready */
 document.addEventListener('DOMContentLoaded', () => {
-  // Temporarily load data so Student 2's charts can render independently
-  window.DS = [...RAW_DATA];
-  onDataReady();
-  // TODO: Student 1 should replace the two lines above with: loadDataset();
+  loadDataset(); // TODO: This call is already here — just implement the function above
 });
-
 
 /* ═══════════════════════════════════════════════════════════════════
    ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗
