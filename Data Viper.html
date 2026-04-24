@@ -951,92 +951,216 @@ function onDataReady() {
  * STUDENT 1 TODO — loadDataset()
  *
  * PURPOSE: Load RAW_DATA into window.DS and trigger the rest of the app.
- *
- * STEPS:
- *  1. Assign RAW_DATA to window.DS (a copy is fine: [...RAW_DATA])
- *  2. Call renderTable(window.DS) to populate the HTML table
- *  3. Call onDataReady() so Students 2 & 3 can initialize their sections
- *  4. Update #rowCount with the total number of rows
  */
 function loadDataset() {
-  // TODO: Implement this function
-  // Hint: window.DS = [...RAW_DATA];
-  // Hint: renderTable(window.DS);
-  // Hint: document.getElementById('rowCount').textContent = window.DS.length + ' rows';
-  // Hint: onDataReady();
+  try {
+    // Defensive copy so sorting/filtering never mutates RAW_DATA
+    window.DS = Array.isArray(RAW_DATA) ? RAW_DATA.map(r => ({ ...r })) : [];
 
-  console.warn("⚠ Student 1: loadDataset() is not yet implemented.");
+    renderTable(window.DS); // renderTable also updates row count
+    onDataReady();          // trigger Student 2/3 sections
+  } catch (err) {
+    console.error("loadDataset() failed:", err);
+    window.DS = [];
+    renderTable(window.DS);
+  }
 }
 
 /**
  * STUDENT 1 TODO — renderTable(data)
  *
  * PURPOSE: Dynamically build and insert table rows into #tableBody.
- *
- * @param {Array} data - Array of student objects from RAW_DATA
- *
- * STEPS:
- *  1. Clear #tableBody
- *  2. If data is empty, show a "No results found" row
- *  3. For each student object, create a <tr> with <td> cells for every column
- *  4. Apply CSS classes: 'numeric' to number cells, 'grade-A/B/C/D' to grade cells
- *  5. Format booleans: job=true → "Yes", job=false → "No"
- *
- * EXAMPLE ROW FORMAT:
- *  <tr>
- *    <td>1</td>
- *    <td>Ana Reyes</td>
- *    <td class="numeric">18</td>
- *    ...
- *    <td class="grade-A">A</td>
- *  </tr>
  */
 function renderTable(data) {
-  // TODO: Implement this function
-  console.warn("⚠ Student 1: renderTable() is not yet implemented.");
+  const tbody = document.getElementById("tableBody");
+  const rowCountEl = document.getElementById("rowCount");
+
+  const safeData = Array.isArray(data) ? data : [];
+  if (!tbody) {
+    console.error("renderTable(): #tableBody not found in DOM.");
+    return;
+  }
+
+  // Clear existing rows
+  tbody.textContent = "";
+
+  // Update row count (always kept in sync with current rendered view)
+  if (rowCountEl) rowCountEl.textContent = `${safeData.length} rows`;
+
+  // Empty state
+  if (safeData.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 10;
+    td.style.textAlign = "center";
+    td.style.color = "var(--text-dim)";
+    td.style.fontFamily = "var(--mono)";
+    td.style.padding = "40px";
+    td.textContent = "No results found.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
+
+  // Column definitions match the existing table header order
+  const cols = [
+    { key: "__index", label: "#" },
+    { key: "name", label: "Student Name" },
+    { key: "studyHours", label: "Study Hours/Week", numeric: true },
+    { key: "attendance", label: "Attendance %", numeric: true },
+    { key: "midterm", label: "Midterm Score", numeric: true },
+    { key: "score", label: "Final Score", numeric: true },
+    { key: "assignments", label: "Assignments Done", numeric: true },
+    { key: "sleep", label: "Sleep Hrs/Night", numeric: true },
+    { key: "job", label: "Part-time Job" },
+    { key: "grade", label: "Grade", grade: true }
+  ];
+
+  const frag = document.createDocumentFragment();
+
+  safeData.forEach((row, idx) => {
+    const tr = document.createElement("tr");
+
+    cols.forEach(col => {
+      const td = document.createElement("td");
+
+      let val;
+      if (col.key === "__index") {
+        val = idx + 1;
+      } else {
+        val = row?.[col.key];
+      }
+
+      // Formatting rules
+      if (col.key === "job") {
+        td.textContent = val === true ? "Yes" : (val === false ? "No" : "—");
+      } else if (col.grade) {
+        const g = (val ?? "").toString().trim().toUpperCase();
+        td.textContent = g || "—";
+        if (g) td.classList.add(`grade-${g}`); // grade-A/B/C/D
+      } else {
+        td.textContent = (val === null || val === undefined || val === "")
+          ? "—"
+          : String(val);
+      }
+
+      // Numeric styling
+      if (col.numeric) td.classList.add("numeric");
+
+      tr.appendChild(td);
+    });
+
+    frag.appendChild(tr);
+  });
+
+  tbody.appendChild(frag);
 }
+
 
 /**
  * STUDENT 1 TODO — applyFilterSort()
  *
  * PURPOSE: Filter by name and sort by selected column, then re-render.
- *
- * STEPS:
- *  1. Read the value from #filterInput (case-insensitive name filter)
- *  2. Read the selected option from #sortSelect
- *  3. Filter window.DS by name, then sort the result
- *  4. Call renderTable(filtered + sorted data)
- *  5. Update #rowCount
- *
- * SORT KEYS match the property names in RAW_DATA:
- *  'name' → alphabetical, others → numeric descending
  */
 function applyFilterSort() {
-  // TODO: Implement this function
-  console.warn("⚠ Student 1: applyFilterSort() is not yet implemented.");
+  const filterEl = document.getElementById("filterInput");
+  const sortEl = document.getElementById("sortSelect");
+
+  const filterText = (filterEl?.value ?? "").trim().toLowerCase();
+  const sortKey = (sortEl?.value ?? "").trim();
+
+  const base = Array.isArray(window.DS) ? window.DS : [];
+
+  // 1) Filter by name (case-insensitive substring)
+  let result = base;
+  if (filterText) {
+    result = base.filter(d => (d?.name ?? "").toLowerCase().includes(filterText));
+  }
+
+  // 2) Sort (do not mutate result in-place without copying)
+  if (sortKey) {
+    const copy = [...result];
+
+    // Grade order: A best → D worst
+    const gradeRank = { A: 1, B: 2, C: 3, D: 4 };
+
+    copy.sort((a, b) => {
+      const av = a?.[sortKey];
+      const bv = b?.[sortKey];
+
+      // Name: alphabetical ascending
+      if (sortKey === "name") {
+        return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
+      }
+
+      // Grade: A, B, C, D ascending by rank
+      if (sortKey === "grade") {
+        const ar = gradeRank[String(av ?? "").toUpperCase()] ?? 999;
+        const br = gradeRank[String(bv ?? "").toUpperCase()] ?? 999;
+        return ar - br;
+      }
+
+      // Numeric (default): descending
+      const an = Number(av);
+      const bn = Number(bv);
+
+      const aIsNum = Number.isFinite(an);
+      const bIsNum = Number.isFinite(bn);
+
+      if (aIsNum && bIsNum) return bn - an;
+      if (aIsNum && !bIsNum) return -1;
+      if (!aIsNum && bIsNum) return 1;
+
+      // Fallback: string compare ascending
+      return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
+    });
+
+    result = copy;
+  }
+
+  renderTable(result);
 }
 
 /**
  * STUDENT 1 TODO — resetTable()
  *
  * PURPOSE: Clear filters and restore original table.
- *
- * STEPS:
- *  1. Clear #filterInput value
- *  2. Reset #sortSelect to ""
- *  3. Call renderTable(window.DS) to restore full dataset
- *  4. Update #rowCount
  */
 function resetTable() {
-  // TODO: Implement this function
-  console.warn("⚠ Student 1: resetTable() is not yet implemented.");
+  const filterEl = document.getElementById("filterInput");
+  const sortEl = document.getElementById("sortSelect");
+
+  if (filterEl) filterEl.value = "";
+  if (sortEl) sortEl.value = "";
+
+  renderTable(Array.isArray(window.DS) ? window.DS : []);
+}
+
+/**
+ * (Student 1) Optional but recommended: wire controls for better UX
+ * - Enter key in filter box triggers Apply
+ * - Changing sort dropdown triggers Apply
+ */
+function wireDatasetControls() {
+  const filterEl = document.getElementById("filterInput");
+  const sortEl = document.getElementById("sortSelect");
+
+  if (filterEl) {
+    filterEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") applyFilterSort();
+    });
+  }
+
+  if (sortEl) {
+    sortEl.addEventListener("change", () => applyFilterSort());
+  }
 }
 
 /* Student 1 entry point — runs when DOM is ready */
-document.addEventListener('DOMContentLoaded', () => {
-  loadDataset(); // TODO: This call is already here — just implement the function above
+document.addEventListener("DOMContentLoaded", () => {
+  wireDatasetControls();
+  loadDataset();
 });
-
 
 /* ═══════════════════════════════════════════════════════════════════
    ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗
