@@ -537,9 +537,9 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════════
      HEADER
-═══════════════════════════════════════════════════════ -->
+═══════════════════════════════════════════════════════════ -->
 <header>
   <div class="header-left">
     <h1>DataSci Collab Dashboard</h1>
@@ -547,7 +547,7 @@
   </div>
   <div class="git-badge">
     <span class="dot"></span>
-    branch: <strong id="currentBranch">main</strong>
+    branch: <strong id="currentBranch">feature/statistics</strong>
   </div>
 </header>
 
@@ -723,54 +723,46 @@
     └─────────────────────────────────────────────────────────────────┘
     -->
 
-    <div class="todo-callout" style="border-left-color: var(--accent2); color: var(--accent2); background: rgba(62,207,207,0.06); border-color: rgba(62,207,207,0.25);">
-      <strong>⚠ TODO — Student 2</strong>
-      Implement the four chart functions: <code>drawBarChart()</code>, <code>drawScatterPlot()</code>,
-      <code>drawHistogram()</code>, and <code>drawPieChart()</code>. Then call <code>initCharts()</code>
-      inside <code>onDataReady()</code>. Use Chart.js (already loaded).
-      Replace each placeholder box with a working canvas chart.
-    </div>
-
     <div class="chart-grid">
 
       <!-- Bar Chart -->
       <div class="chart-box">
         <h4>Study Hours vs Final Score</h4>
-        <div class="chart-placeholder" id="barPlaceholder">
+        <div class="chart-placeholder" id="barPlaceholder" style="display:none;">
           <span>📊</span>
           Student 2: implement drawBarChart()
         </div>
-        <canvas id="barChart" style="display:none;"></canvas>
+        <canvas id="barChart"></canvas>
       </div>
 
       <!-- Scatter Plot -->
       <div class="chart-box">
         <h4>Attendance % vs Final Score</h4>
-        <div class="chart-placeholder" id="scatterPlaceholder">
+        <div class="chart-placeholder" id="scatterPlaceholder" style="display:none;">
           <span>🔵</span>
           Student 2: implement drawScatterPlot()
         </div>
-        <canvas id="scatterChart" style="display:none;"></canvas>
+        <canvas id="scatterChart"></canvas>
       </div>
 
       <!-- Histogram -->
       <div class="chart-box">
         <h4>Final Score Distribution</h4>
-        <div class="chart-placeholder" id="histPlaceholder">
+        <div class="chart-placeholder" id="histPlaceholder" style="display:none;">
           <span>📈</span>
           Student 2: implement drawHistogram()
         </div>
-        <canvas id="histChart" style="display:none;"></canvas>
+        <canvas id="histChart"></canvas>
       </div>
 
       <!-- Pie Chart -->
       <div class="chart-box">
         <h4>Grade Distribution</h4>
-        <div class="chart-placeholder" id="piePlaceholder">
+        <div class="chart-placeholder" id="piePlaceholder" style="display:none;">
           <span>🍕</span>
           Student 2: implement drawPieChart()
         </div>
-        <canvas id="pieChart" style="display:none;"></canvas>
+        <canvas id="pieChart"></canvas>
       </div>
 
     </div><!-- /chart-grid -->
@@ -926,11 +918,11 @@ window.CHARTS = {};
 
 /* Called automatically when the dataset is ready (Student 1 triggers this) */
 function onDataReady() {
-  // Student 2: call your chart initializer here
-  // Example: initCharts();
+  // Student 2: initialize all charts
+  initCharts();
 
-  // Student 3: call your stats renderer here
-  // Example: renderStats(window.DS);
+  // Student 3: render statistical analysis
+  renderStats(window.DS);
 
   console.log("✅ onDataReady() fired. window.DS has", window.DS.length, "rows.");
 }
@@ -951,216 +943,95 @@ function onDataReady() {
  * STUDENT 1 TODO — loadDataset()
  *
  * PURPOSE: Load RAW_DATA into window.DS and trigger the rest of the app.
+ *
+ * STEPS:
+ *  1. Assign RAW_DATA to window.DS (a copy is fine: [...RAW_DATA])
+ *  2. Call renderTable(window.DS) to populate the HTML table
+ *  3. Call onDataReady() so Students 2 & 3 can initialize their sections
+ *  4. Update #rowCount with the total number of rows
  */
 function loadDataset() {
-  try {
-    // Defensive copy so sorting/filtering never mutates RAW_DATA
-    window.DS = Array.isArray(RAW_DATA) ? RAW_DATA.map(r => ({ ...r })) : [];
+  // TODO: Implement this function
+  // Hint: window.DS = [...RAW_DATA];
+  // Hint: renderTable(window.DS);
+  // Hint: document.getElementById('rowCount').textContent = window.DS.length + ' rows';
+  // Hint: onDataReady();
 
-    renderTable(window.DS); // renderTable also updates row count
-    onDataReady();          // trigger Student 2/3 sections
-  } catch (err) {
-    console.error("loadDataset() failed:", err);
-    window.DS = [];
-    renderTable(window.DS);
-  }
+  console.warn("⚠ Student 1: loadDataset() is not yet implemented.");
 }
 
 /**
  * STUDENT 1 TODO — renderTable(data)
  *
  * PURPOSE: Dynamically build and insert table rows into #tableBody.
+ *
+ * @param {Array} data - Array of student objects from RAW_DATA
+ *
+ * STEPS:
+ *  1. Clear #tableBody
+ *  2. If data is empty, show a "No results found" row
+ *  3. For each student object, create a <tr> with <td> cells for every column
+ *  4. Apply CSS classes: 'numeric' to number cells, 'grade-A/B/C/D' to grade cells
+ *  5. Format booleans: job=true → "Yes", job=false → "No"
+ *
+ * EXAMPLE ROW FORMAT:
+ *  <tr>
+ *    <td>1</td>
+ *    <td>Ana Reyes</td>
+ *    <td class="numeric">18</td>
+ *    ...
+ *    <td class="grade-A">A</td>
+ *  </tr>
  */
 function renderTable(data) {
-  const tbody = document.getElementById("tableBody");
-  const rowCountEl = document.getElementById("rowCount");
-
-  const safeData = Array.isArray(data) ? data : [];
-  if (!tbody) {
-    console.error("renderTable(): #tableBody not found in DOM.");
-    return;
-  }
-
-  // Clear existing rows
-  tbody.textContent = "";
-
-  // Update row count (always kept in sync with current rendered view)
-  if (rowCountEl) rowCountEl.textContent = `${safeData.length} rows`;
-
-  // Empty state
-  if (safeData.length === 0) {
-    const tr = document.createElement("tr");
-    const td = document.createElement("td");
-    td.colSpan = 10;
-    td.style.textAlign = "center";
-    td.style.color = "var(--text-dim)";
-    td.style.fontFamily = "var(--mono)";
-    td.style.padding = "40px";
-    td.textContent = "No results found.";
-    tr.appendChild(td);
-    tbody.appendChild(tr);
-    return;
-  }
-
-  // Column definitions match the existing table header order
-  const cols = [
-    { key: "__index", label: "#" },
-    { key: "name", label: "Student Name" },
-    { key: "studyHours", label: "Study Hours/Week", numeric: true },
-    { key: "attendance", label: "Attendance %", numeric: true },
-    { key: "midterm", label: "Midterm Score", numeric: true },
-    { key: "score", label: "Final Score", numeric: true },
-    { key: "assignments", label: "Assignments Done", numeric: true },
-    { key: "sleep", label: "Sleep Hrs/Night", numeric: true },
-    { key: "job", label: "Part-time Job" },
-    { key: "grade", label: "Grade", grade: true }
-  ];
-
-  const frag = document.createDocumentFragment();
-
-  safeData.forEach((row, idx) => {
-    const tr = document.createElement("tr");
-
-    cols.forEach(col => {
-      const td = document.createElement("td");
-
-      let val;
-      if (col.key === "__index") {
-        val = idx + 1;
-      } else {
-        val = row?.[col.key];
-      }
-
-      // Formatting rules
-      if (col.key === "job") {
-        td.textContent = val === true ? "Yes" : (val === false ? "No" : "—");
-      } else if (col.grade) {
-        const g = (val ?? "").toString().trim().toUpperCase();
-        td.textContent = g || "—";
-        if (g) td.classList.add(`grade-${g}`); // grade-A/B/C/D
-      } else {
-        td.textContent = (val === null || val === undefined || val === "")
-          ? "—"
-          : String(val);
-      }
-
-      // Numeric styling
-      if (col.numeric) td.classList.add("numeric");
-
-      tr.appendChild(td);
-    });
-
-    frag.appendChild(tr);
-  });
-
-  tbody.appendChild(frag);
+  // TODO: Implement this function
+  console.warn("⚠ Student 1: renderTable() is not yet implemented.");
 }
-
 
 /**
  * STUDENT 1 TODO — applyFilterSort()
  *
  * PURPOSE: Filter by name and sort by selected column, then re-render.
+ *
+ * STEPS:
+ *  1. Read the value from #filterInput (case-insensitive name filter)
+ *  2. Read the selected option from #sortSelect
+ *  3. Filter window.DS by name, then sort the result
+ *  4. Call renderTable(filtered + sorted data)
+ *  5. Update #rowCount
+ *
+ * SORT KEYS match the property names in RAW_DATA:
+ *  'name' → alphabetical, others → numeric descending
  */
 function applyFilterSort() {
-  const filterEl = document.getElementById("filterInput");
-  const sortEl = document.getElementById("sortSelect");
-
-  const filterText = (filterEl?.value ?? "").trim().toLowerCase();
-  const sortKey = (sortEl?.value ?? "").trim();
-
-  const base = Array.isArray(window.DS) ? window.DS : [];
-
-  // 1) Filter by name (case-insensitive substring)
-  let result = base;
-  if (filterText) {
-    result = base.filter(d => (d?.name ?? "").toLowerCase().includes(filterText));
-  }
-
-  // 2) Sort (do not mutate result in-place without copying)
-  if (sortKey) {
-    const copy = [...result];
-
-    // Grade order: A best → D worst
-    const gradeRank = { A: 1, B: 2, C: 3, D: 4 };
-
-    copy.sort((a, b) => {
-      const av = a?.[sortKey];
-      const bv = b?.[sortKey];
-
-      // Name: alphabetical ascending
-      if (sortKey === "name") {
-        return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
-      }
-
-      // Grade: A, B, C, D ascending by rank
-      if (sortKey === "grade") {
-        const ar = gradeRank[String(av ?? "").toUpperCase()] ?? 999;
-        const br = gradeRank[String(bv ?? "").toUpperCase()] ?? 999;
-        return ar - br;
-      }
-
-      // Numeric (default): descending
-      const an = Number(av);
-      const bn = Number(bv);
-
-      const aIsNum = Number.isFinite(an);
-      const bIsNum = Number.isFinite(bn);
-
-      if (aIsNum && bIsNum) return bn - an;
-      if (aIsNum && !bIsNum) return -1;
-      if (!aIsNum && bIsNum) return 1;
-
-      // Fallback: string compare ascending
-      return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
-    });
-
-    result = copy;
-  }
-
-  renderTable(result);
+  // TODO: Implement this function
+  console.warn("⚠ Student 1: applyFilterSort() is not yet implemented.");
 }
 
 /**
  * STUDENT 1 TODO — resetTable()
  *
  * PURPOSE: Clear filters and restore original table.
+ *
+ * STEPS:
+ *  1. Clear #filterInput value
+ *  2. Reset #sortSelect to ""
+ *  3. Call renderTable(window.DS) to restore full dataset
+ *  4. Update #rowCount
  */
 function resetTable() {
-  const filterEl = document.getElementById("filterInput");
-  const sortEl = document.getElementById("sortSelect");
-
-  if (filterEl) filterEl.value = "";
-  if (sortEl) sortEl.value = "";
-
-  renderTable(Array.isArray(window.DS) ? window.DS : []);
-}
-
-/**
- * (Student 1) Optional but recommended: wire controls for better UX
- * - Enter key in filter box triggers Apply
- * - Changing sort dropdown triggers Apply
- */
-function wireDatasetControls() {
-  const filterEl = document.getElementById("filterInput");
-  const sortEl = document.getElementById("sortSelect");
-
-  if (filterEl) {
-    filterEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") applyFilterSort();
-    });
-  }
-
-  if (sortEl) {
-    sortEl.addEventListener("change", () => applyFilterSort());
-  }
+  // TODO: Implement this function
+  console.warn("⚠ Student 1: resetTable() is not yet implemented.");
 }
 
 /* Student 1 entry point — runs when DOM is ready */
-document.addEventListener("DOMContentLoaded", () => {
-  wireDatasetControls();
-  loadDataset();
+document.addEventListener('DOMContentLoaded', () => {
+  // Temporarily load data so Student 2's charts can render independently
+  window.DS = [...RAW_DATA];
+  onDataReady();
+  // TODO: Student 1 should replace the two lines above with: loadDataset();
 });
+
 
 /* ═══════════════════════════════════════════════════════════════════
    ██╗   ██╗██╗███████╗██╗   ██╗ █████╗ ██╗     ██╗███████╗
@@ -1174,135 +1045,377 @@ document.addEventListener("DOMContentLoaded", () => {
 ═══════════════════════════════════════════════════════════════════ */
 
 /**
- * STUDENT 2 TODO — initCharts()
+ * initCharts()
  *
- * PURPOSE: Entry point. Called from onDataReady() after data is loaded.
- * Call all four draw functions here, passing window.DS.
- *
- * IMPORTANT: Destroy any existing Chart instance before creating a new one.
- * Use window.CHARTS to track instances:
- *   if (window.CHARTS['barChart']) window.CHARTS['barChart'].destroy();
+ * Entry point called from onDataReady() after data is loaded.
+ * Destroys any existing Chart instances before re-creating them
+ * to prevent "Canvas is already in use" errors.
  */
 function initCharts() {
-  // TODO: Call all four chart functions here
-  // drawBarChart('barChart', window.DS);
-  // drawScatterPlot('scatterChart', window.DS);
-  // drawHistogram('histChart', window.DS);
-  // drawPieChart('pieChart', window.DS);
-
-  console.warn("⚠ Student 2: initCharts() is not yet implemented.");
+  drawBarChart('barChart', window.DS);
+  drawScatterPlot('scatterChart', window.DS);
+  drawHistogram('histChart', window.DS);
+  drawPieChart('pieChart', window.DS);
 }
 
 /**
- * STUDENT 2 TODO — drawBarChart(canvasId, data)
+ * drawBarChart(canvasId, data)
  *
- * PURPOSE: Bar chart — Study Hours per student on x-axis, Final Score on y-axis.
- *
- * @param {string} canvasId - 'barChart'
- * @param {Array}  data     - window.DS array
- *
- * CHART.JS GUIDE:
- *  const ctx = document.getElementById(canvasId).getContext('2d');
- *  new Chart(ctx, { type: 'bar', data: { labels: [...], datasets: [{ data: [...] }] } });
- *
- * VISUAL REQUIREMENTS:
- *  - Labels = student first names (split on space, take index 0)
- *  - Bars colored with the amber accent (#f0b429) at 80% opacity
- *  - X-axis: Study Hours (numeric, sort data by studyHours ascending first)
- *  - Y-axis: Final Score (0–100)
- *  - Enable the legend and tooltip
+ * Bar chart — students sorted by study hours (ascending) on x-axis,
+ * final score on y-axis. Bars colored amber.
  */
 function drawBarChart(canvasId, data) {
-  // TODO: Implement this function
-  // After implementing, show the canvas:
-  // document.getElementById('barPlaceholder').style.display = 'none';
-  // document.getElementById(canvasId).style.display = 'block';
+  // Destroy existing instance to prevent canvas reuse errors
+  if (window.CHARTS[canvasId]) {
+    window.CHARTS[canvasId].destroy();
+  }
 
-  console.warn("⚠ Student 2: drawBarChart() is not yet implemented.");
+  // Sort a copy of data by studyHours ascending
+  const sorted = [...data].sort((a, b) => a.studyHours - b.studyHours);
+
+  const labels = sorted.map(d => d.name.split(' ')[0]);
+  const scores = sorted.map(d => d.score);
+  const hours  = sorted.map(d => d.studyHours);
+
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const defaults = getChartDefaults();
+
+  window.CHARTS[canvasId] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Final Score',
+          data: scores,
+          backgroundColor: 'rgba(240, 180, 41, 0.8)',
+          borderColor: '#f0b429',
+          borderWidth: 1,
+          borderRadius: 4,
+          order: 1,
+        },
+        {
+          label: 'Study Hours',
+          data: hours,
+          backgroundColor: 'rgba(62, 207, 207, 0.5)',
+          borderColor: '#3ecfcf',
+          borderWidth: 1,
+          borderRadius: 4,
+          order: 2,
+        }
+      ]
+    },
+    options: {
+      ...defaults,
+      plugins: {
+        ...defaults.plugins,
+        tooltip: {
+          ...defaults.plugins.tooltip,
+          callbacks: {
+            afterLabel: (ctx) => {
+              const d = sorted[ctx.dataIndex];
+              return `Study Hrs: ${d.studyHours} | Grade: ${d.grade}`;
+            }
+          }
+        }
+      },
+      scales: {
+        ...defaults.scales,
+        y: {
+          ...defaults.scales.y,
+          min: 0,
+          max: 100,
+          title: {
+            display: true,
+            text: 'Score / Hours',
+            color: '#6b748f',
+            font: { family: 'Courier Prime', size: 10 }
+          }
+        },
+        x: {
+          ...defaults.scales.x,
+          title: {
+            display: true,
+            text: 'Student (sorted by study hours ↑)',
+            color: '#6b748f',
+            font: { family: 'Courier Prime', size: 10 }
+          }
+        }
+      }
+    }
+  });
+
+  // Show canvas, hide placeholder
+  document.getElementById('barPlaceholder').style.display = 'none';
+  document.getElementById(canvasId).style.display = 'block';
 }
 
 /**
- * STUDENT 2 TODO — drawScatterPlot(canvasId, data)
+ * drawScatterPlot(canvasId, data)
  *
- * PURPOSE: Scatter plot — Attendance % (x) vs Final Score (y).
- *          Each point represents one student.
- *
- * @param {string} canvasId - 'scatterChart'
- * @param {Array}  data     - window.DS array
- *
- * VISUAL REQUIREMENTS:
- *  - Point data format: { x: attendance, y: score }
- *  - Color points teal (#3ecfcf)
- *  - Show student name in the tooltip (use tooltip callback)
- *  - Draw a simple linear regression line as a second dataset (optional bonus)
+ * Scatter plot — Attendance % (x) vs Final Score (y).
+ * Each point is one student. Includes a linear regression trend line.
  */
 function drawScatterPlot(canvasId, data) {
-  // TODO: Implement this function
-  // After implementing, show the canvas:
-  // document.getElementById('scatterPlaceholder').style.display = 'none';
-  // document.getElementById(canvasId).style.display = 'block';
+  if (window.CHARTS[canvasId]) {
+    window.CHARTS[canvasId].destroy();
+  }
 
-  console.warn("⚠ Student 2: drawScatterPlot() is not yet implemented.");
+  // Build point data
+  const points = data.map(d => ({ x: d.attendance, y: d.score, name: d.name.split(' ')[0] }));
+
+  // Compute a simple linear regression for the trend line
+  const xVals = data.map(d => d.attendance);
+  const yVals = data.map(d => d.score);
+  const xMean = xVals.reduce((a, b) => a + b, 0) / xVals.length;
+  const yMean = yVals.reduce((a, b) => a + b, 0) / yVals.length;
+  const num   = xVals.reduce((sum, x, i) => sum + (x - xMean) * (yVals[i] - yMean), 0);
+  const den   = xVals.reduce((sum, x) => sum + (x - xMean) ** 2, 0);
+  const slope = num / den;
+  const intercept = yMean - slope * xMean;
+
+  // Generate trend line points across the attendance range
+  const minX = Math.min(...xVals);
+  const maxX = Math.max(...xVals);
+  const trendLine = [
+    { x: minX, y: parseFloat((slope * minX + intercept).toFixed(2)) },
+    { x: maxX, y: parseFloat((slope * maxX + intercept).toFixed(2)) }
+  ];
+
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const defaults = getChartDefaults();
+
+  window.CHARTS[canvasId] = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Students',
+          data: points,
+          backgroundColor: 'rgba(62, 207, 207, 0.75)',
+          borderColor: '#3ecfcf',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          order: 2,
+        },
+        {
+          label: 'Trend Line',
+          data: trendLine,
+          type: 'line',
+          borderColor: 'rgba(240, 180, 41, 0.6)',
+          borderWidth: 2,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+          tension: 0,
+          order: 1,
+        }
+      ]
+    },
+    options: {
+      ...defaults,
+      plugins: {
+        ...defaults.plugins,
+        tooltip: {
+          ...defaults.plugins.tooltip,
+          callbacks: {
+            label: (ctx) => {
+              if (ctx.datasetIndex === 0) {
+                const p = ctx.raw;
+                return `${p.name} — Attendance: ${p.x}% | Score: ${p.y}`;
+              }
+              return null;
+            }
+          }
+        }
+      },
+      scales: {
+        ...defaults.scales,
+        x: {
+          ...defaults.scales.x,
+          min: 50,
+          max: 100,
+          title: {
+            display: true,
+            text: 'Attendance (%)',
+            color: '#6b748f',
+            font: { family: 'Courier Prime', size: 10 }
+          }
+        },
+        y: {
+          ...defaults.scales.y,
+          min: 40,
+          max: 100,
+          title: {
+            display: true,
+            text: 'Final Score',
+            color: '#6b748f',
+            font: { family: 'Courier Prime', size: 10 }
+          }
+        }
+      }
+    }
+  });
+
+  document.getElementById('scatterPlaceholder').style.display = 'none';
+  document.getElementById(canvasId).style.display = 'block';
 }
 
 /**
- * STUDENT 2 TODO — drawHistogram(canvasId, data)
+ * drawHistogram(canvasId, data)
  *
- * PURPOSE: Histogram — distribution of Final Scores in 10-point bins.
- *          Bins: 40–49, 50–59, 60–69, 70–79, 80–89, 90–100
- *
- * @param {string} canvasId - 'histChart'
- * @param {Array}  data     - window.DS array
- *
- * STEPS:
- *  1. Define bins: [40,50,60,70,80,90,100]
- *  2. Count how many students' scores fall in each bin
- *  3. Render as a bar chart (type: 'bar') with no gap between bars
- *     (use barPercentage: 1.0, categoryPercentage: 1.0)
- *
- * VISUAL REQUIREMENTS:
- *  - Bars colored coral (#e05c6a) at 75% opacity
- *  - X-axis labels: '40s', '50s', '60s', '70s', '80s', '90s+'
- *  - Y-axis: Count (integer ticks)
+ * Histogram — distribution of Final Scores in 10-point bins.
+ * Bins: 40–49, 50–59, 60–69, 70–79, 80–89, 90–100
  */
 function drawHistogram(canvasId, data) {
-  // TODO: Implement this function
-  // After implementing, show the canvas:
-  // document.getElementById('histPlaceholder').style.display = 'none';
-  // document.getElementById(canvasId).style.display = 'block';
+  if (window.CHARTS[canvasId]) {
+    window.CHARTS[canvasId].destroy();
+  }
 
-  console.warn("⚠ Student 2: drawHistogram() is not yet implemented.");
+  // Define bin edges and labels
+  const binEdges  = [40, 50, 60, 70, 80, 90, 101];
+  const binLabels = ['40s', '50s', '60s', '70s', '80s', '90s+'];
+  const counts    = new Array(binLabels.length).fill(0);
+
+  data.forEach(d => {
+    for (let i = 0; i < binEdges.length - 1; i++) {
+      if (d.score >= binEdges[i] && d.score < binEdges[i + 1]) {
+        counts[i]++;
+        break;
+      }
+    }
+  });
+
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const defaults = getChartDefaults();
+
+  window.CHARTS[canvasId] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: binLabels,
+      datasets: [{
+        label: 'Number of Students',
+        data: counts,
+        backgroundColor: 'rgba(224, 92, 106, 0.75)',
+        borderColor: '#e05c6a',
+        borderWidth: 1,
+        borderRadius: 2,
+        // No gap between histogram bars
+        barPercentage: 1.0,
+        categoryPercentage: 1.0,
+      }]
+    },
+    options: {
+      ...defaults,
+      plugins: {
+        ...defaults.plugins,
+        tooltip: {
+          ...defaults.plugins.tooltip,
+          callbacks: {
+            label: (ctx) => `Students: ${ctx.raw}`
+          }
+        }
+      },
+      scales: {
+        ...defaults.scales,
+        x: {
+          ...defaults.scales.x,
+          title: {
+            display: true,
+            text: 'Score Range',
+            color: '#6b748f',
+            font: { family: 'Courier Prime', size: 10 }
+          }
+        },
+        y: {
+          ...defaults.scales.y,
+          min: 0,
+          ticks: {
+            ...defaults.scales.y.ticks,
+            stepSize: 1,
+            precision: 0,
+          },
+          title: {
+            display: true,
+            text: 'Count',
+            color: '#6b748f',
+            font: { family: 'Courier Prime', size: 10 }
+          }
+        }
+      }
+    }
+  });
+
+  document.getElementById('histPlaceholder').style.display = 'none';
+  document.getElementById(canvasId).style.display = 'block';
 }
 
 /**
- * STUDENT 2 TODO — drawPieChart(canvasId, data)
+ * drawPieChart(canvasId, data)
  *
- * PURPOSE: Pie / doughnut chart showing grade distribution (A, B, C, D).
- *
- * @param {string} canvasId - 'pieChart'
- * @param {Array}  data     - window.DS array
- *
- * STEPS:
- *  1. Count occurrences of each grade in data
- *  2. Build labels: ['A', 'B', 'C', 'D'] and matching counts
- *  3. Use type: 'doughnut'
- *
- * VISUAL REQUIREMENTS:
- *  - Colors: A=#56d364 (green), B=#f0b429 (amber), C=#3ecfcf (teal), D=#e05c6a (coral)
- *  - Show percentage labels in tooltip
- *  - Cutout: '55%' for doughnut style
+ * Doughnut chart showing grade distribution (A, B, C, D).
  */
 function drawPieChart(canvasId, data) {
-  // TODO: Implement this function
-  // After implementing, show the canvas:
-  // document.getElementById('piePlaceholder').style.display = 'none';
-  // document.getElementById(canvasId).style.display = 'block';
+  if (window.CHARTS[canvasId]) {
+    window.CHARTS[canvasId].destroy();
+  }
 
-  console.warn("⚠ Student 2: drawPieChart() is not yet implemented.");
+  // Count each grade
+  const gradeCounts = { A: 0, B: 0, C: 0, D: 0 };
+  data.forEach(d => { if (gradeCounts[d.grade] !== undefined) gradeCounts[d.grade]++; });
+
+  const labels = ['A', 'B', 'C', 'D'];
+  const counts = labels.map(g => gradeCounts[g]);
+  const total  = counts.reduce((a, b) => a + b, 0);
+
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const defaults = getChartDefaults();
+
+  window.CHARTS[canvasId] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: counts,
+        backgroundColor: [
+          '#56d364',   // A — green
+          '#f0b429',   // B — amber
+          '#3ecfcf',   // C — teal
+          '#e05c6a',   // D — coral
+        ],
+        borderColor: '#1c2030',
+        borderWidth: 3,
+        hoverOffset: 8,
+      }]
+    },
+    options: {
+      ...defaults,
+      cutout: '55%',
+      plugins: {
+        ...defaults.plugins,
+        legend: {
+          ...defaults.plugins.legend,
+          position: 'bottom',
+        },
+        tooltip: {
+          ...defaults.plugins.tooltip,
+          callbacks: {
+            label: (ctx) => {
+              const pct = ((ctx.raw / total) * 100).toFixed(1);
+              return ` Grade ${ctx.label}: ${ctx.raw} students (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  document.getElementById('piePlaceholder').style.display = 'none';
+  document.getElementById(canvasId).style.display = 'block';
 }
 
 /**
- * STUDENT 2 HELPER — getChartDefaults()
+ * getChartDefaults()
  * Pre-configured Chart.js global options matching the dark theme.
  * Use or extend this in your chart configs.
  *
@@ -1352,177 +1465,146 @@ function getChartDefaults() {
 ═══════════════════════════════════════════════════════════════════ */
 
 /**
- * STUDENT 3 TODO — mean(arr)
- *
- * PURPOSE: Compute the arithmetic mean of a numeric array.
- *
- * @param  {number[]} arr - Array of numbers
- * @returns {number}       Mean value, rounded to 2 decimal places
- *
- * FORMULA: μ = (Σxᵢ) / n
- *
- * EXAMPLE:
- *   mean([10, 20, 30])  →  20.00
- *   mean([91, 68, 97])  →  85.33
+ * mean(arr)
+ * Returns the arithmetic mean of a numeric array, rounded to 2 decimal places.
+ * Formula: μ = (Σxᵢ) / n
  */
 function mean(arr) {
-  // TODO: Implement this function
-  // Hint: use arr.reduce() to sum, then divide by arr.length
-  throw new Error("Student 3: mean() not implemented yet");
+  const sum = arr.reduce((acc, val) => acc + val, 0);
+  return parseFloat((sum / arr.length).toFixed(2));
 }
 
 /**
- * STUDENT 3 TODO — median(arr)
- *
- * PURPOSE: Find the middle value of a sorted array.
- *          For even-length arrays, average the two middle values.
- *
- * @param  {number[]} arr - Array of numbers
- * @returns {number}       Median, rounded to 2 decimal places
- *
- * FORMULA:
- *   odd n:  arr[Math.floor(n/2)]  (after sorting)
- *   even n: (arr[n/2 - 1] + arr[n/2]) / 2
- *
- * EXAMPLE:
- *   median([3, 1, 4, 1, 5])  →  3.00
- *   median([1, 2, 3, 4])     →  2.50
+ * median(arr)
+ * Returns the middle value of a sorted array.
+ * For even-length arrays, averages the two middle values.
  */
 function median(arr) {
-  // TODO: Implement this function
-  // Hint: [...arr].sort((a,b) => a-b) for a sorted copy (do not mutate original)
-  throw new Error("Student 3: median() not implemented yet");
+  const sorted = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 !== 0) {
+    return parseFloat(sorted[mid].toFixed(2));
+  }
+  return parseFloat(((sorted[mid - 1] + sorted[mid]) / 2).toFixed(2));
 }
 
 /**
- * STUDENT 3 TODO — mode(arr)
- *
- * PURPOSE: Find the most frequently occurring value(s).
- *          If multiple values tie, return all of them joined by " & ".
- *
- * @param  {number[]} arr - Array of numbers
- * @returns {string}       Mode value(s) as a string (e.g., "75" or "75 & 80")
- *
- * STEPS:
- *  1. Build a frequency map: { value: count }
- *  2. Find the maximum count
- *  3. Collect all values that have that count
- *  4. Return them joined by " & "
+ * mode(arr)
+ * Returns the most frequently occurring value(s).
+ * If multiple values tie, returns all joined by " & ".
  */
 function mode(arr) {
-  // TODO: Implement this function
-  throw new Error("Student 3: mode() not implemented yet");
+  const freq = {};
+  arr.forEach(val => { freq[val] = (freq[val] || 0) + 1; });
+  const maxCount = Math.max(...Object.values(freq));
+  const modes = Object.keys(freq)
+    .filter(key => freq[key] === maxCount)
+    .map(Number)
+    .sort((a, b) => a - b);
+  return modes.join(' & ');
 }
 
 /**
- * STUDENT 3 TODO — variance(arr)
- *
- * PURPOSE: Compute the population variance of a numeric array.
- *
- * @param  {number[]} arr - Array of numbers
- * @returns {number}       Variance σ², rounded to 2 decimal places
- *
- * FORMULA: σ² = (Σ(xᵢ − μ)²) / n
- *
- * EXAMPLE:
- *   variance([2, 4, 4, 4, 5, 5, 7, 9])  →  4.00
+ * variance(arr)
+ * Returns the population variance σ², rounded to 2 decimal places.
+ * Formula: σ² = (Σ(xᵢ − μ)²) / n
  */
 function variance(arr) {
-  // TODO: Implement this function
-  // Hint: compute mean first, then average the squared differences
-  throw new Error("Student 3: variance() not implemented yet");
+  const μ = mean(arr);
+  const sumSqDiff = arr.reduce((acc, val) => acc + (val - μ) ** 2, 0);
+  return parseFloat((sumSqDiff / arr.length).toFixed(2));
 }
 
 /**
- * STUDENT 3 TODO — stdDev(arr)
- *
- * PURPOSE: Standard deviation — square root of population variance.
- *
- * @param  {number[]} arr - Array of numbers
- * @returns {number}       σ, rounded to 2 decimal places
- *
- * FORMULA: σ = √(variance(arr))
+ * stdDev(arr)
+ * Returns the population standard deviation σ, rounded to 2 decimal places.
+ * Formula: σ = √(variance(arr))
  */
 function stdDev(arr) {
-  // TODO: Implement this function
-  // Hint: Math.sqrt(variance(arr))
-  throw new Error("Student 3: stdDev() not implemented yet");
+  return parseFloat(Math.sqrt(variance(arr)).toFixed(2));
 }
 
 /**
- * STUDENT 3 TODO — pearsonCorr(x, y)
- *
- * PURPOSE: Pearson correlation coefficient r between two arrays.
- *          r ranges from -1 (perfect negative) to +1 (perfect positive).
- *
- * @param  {number[]} x - Independent variable values
- * @param  {number[]} y - Dependent variable values (same length as x)
- * @returns {number}      r, rounded to 4 decimal places
- *
- * FORMULA:
- *   r = Σ((xᵢ−x̄)(yᵢ−ȳ)) / √(Σ(xᵢ−x̄)² · Σ(yᵢ−ȳ)²)
- *
- * INTERPRETATION HELPER (use in renderStats):
- *   |r| ≥ 0.7 → Strong
- *   |r| ≥ 0.4 → Moderate
- *   |r| < 0.4 → Weak
- *   Sign: positive = direct relationship, negative = inverse
+ * pearsonCorr(x, y)
+ * Returns the Pearson correlation coefficient r between two arrays.
+ * r ranges from -1 (perfect negative) to +1 (perfect positive).
+ * Rounded to 4 decimal places.
  */
 function pearsonCorr(x, y) {
-  // TODO: Implement this function
-  throw new Error("Student 3: pearsonCorr() not implemented yet");
+  const xMean = mean(x);
+  const yMean = mean(y);
+  const numerator   = x.reduce((sum, xi, i) => sum + (xi - xMean) * (y[i] - yMean), 0);
+  const denominator = Math.sqrt(
+    x.reduce((sum, xi) => sum + (xi - xMean) ** 2, 0) *
+    y.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0)
+  );
+  return parseFloat((numerator / denominator).toFixed(4));
 }
 
 /**
- * STUDENT 3 TODO — linearRegression(x, y)
- *
- * PURPOSE: Simple linear regression — find the best-fit line y = mx + b.
- *
- * @param  {number[]} x - Independent variable values
- * @param  {number[]} y - Dependent variable values
- * @returns {{ slope: number, intercept: number, rSquared: number }}
- *
- * FORMULAS:
- *   m (slope)     = Σ((xᵢ−x̄)(yᵢ−ȳ)) / Σ(xᵢ−x̄)²
- *   b (intercept) = ȳ − m·x̄
- *   R²            = r² (square the Pearson correlation coefficient)
- *
- * ROUND: slope and intercept to 4 decimal places; R² to 4 decimal places.
- *
- * EXAMPLE OUTPUT: { slope: 2.1, intercept: 45.3, rSquared: 0.87 }
+ * linearRegression(x, y)
+ * Returns { slope, intercept, rSquared } for the best-fit line y = mx + b.
+ * All values rounded to 4 decimal places.
  */
 function linearRegression(x, y) {
-  // TODO: Implement this function
-  throw new Error("Student 3: linearRegression() not implemented yet");
+  const xMean = mean(x);
+  const yMean = mean(y);
+  const numerator   = x.reduce((sum, xi, i) => sum + (xi - xMean) * (y[i] - yMean), 0);
+  const denominator = x.reduce((sum, xi) => sum + (xi - xMean) ** 2, 0);
+  const slope     = parseFloat((numerator / denominator).toFixed(4));
+  const intercept = parseFloat((yMean - slope * xMean).toFixed(4));
+  const r         = pearsonCorr(x, y);
+  const rSquared  = parseFloat((r * r).toFixed(4));
+  return { slope, intercept, rSquared };
 }
 
 /**
- * STUDENT 3 TODO — renderStats(data)
- *
- * PURPOSE: Compute all statistics from data and update the DOM.
- *          Called from onDataReady() after Student 1 loads the dataset.
- *
- * @param {Array} data - window.DS array
- *
- * DOM ELEMENTS TO UPDATE:
- *   #statMean, #statMedian, #statStdDev, #statMode  — summary cards
- *   #dCount, #dMin, #dMax, #dRange, #dVariance, #dStdDev — descriptive stats
- *   #rPearson, #rInterp, #rSlope, #rIntercept, #rSquared, #rEquation — regression
- *
- * STEPS:
- *  1. Extract scores:    data.map(d => d.score)
- *  2. Extract hours:     data.map(d => d.studyHours)
- *  3. Call each stat function and update the matching DOM element
- *  4. For #rEquation, build a string like: "score = 2.10·hours + 45.30"
- *  5. For #rInterp, return the interpretation string (Strong/Moderate/Weak)
- *     combined with the direction (Positive/Negative)
- *
- * EXAMPLE interpretation: "Strong Positive Correlation"
+ * renderStats(data)
+ * Computes all statistics and updates the DOM.
+ * Called from onDataReady() after Student 1 loads the dataset.
  */
 function renderStats(data) {
-  // TODO: Implement this function
-  // Hint: use try/catch so errors in your stat functions don't crash the page
-  console.warn("⚠ Student 3: renderStats() is not yet implemented.");
+  try {
+    const scores = data.map(d => d.score);
+    const hours  = data.map(d => d.studyHours);
+
+    // ── Summary stat cards ──────────────────────────────────────
+    document.getElementById('statMean').textContent   = mean(scores);
+    document.getElementById('statMedian').textContent = median(scores);
+    document.getElementById('statStdDev').textContent = stdDev(scores);
+    document.getElementById('statMode').textContent   = mode(scores);
+
+    // ── Descriptive statistics panel ────────────────────────────
+    const minVal = Math.min(...scores);
+    const maxVal = Math.max(...scores);
+    document.getElementById('dCount').textContent    = scores.length;
+    document.getElementById('dMin').textContent      = minVal;
+    document.getElementById('dMax').textContent      = maxVal;
+    document.getElementById('dRange').textContent    = maxVal - minVal;
+    document.getElementById('dVariance').textContent = variance(scores);
+    document.getElementById('dStdDev').textContent   = stdDev(scores);
+
+    // ── Correlation & regression panel ──────────────────────────
+    const r    = pearsonCorr(hours, scores);
+    const reg  = linearRegression(hours, scores);
+    const absR = Math.abs(r);
+
+    // Interpretation
+    let strength  = absR >= 0.7 ? 'Strong' : absR >= 0.4 ? 'Moderate' : 'Weak';
+    let direction = r >= 0 ? 'Positive' : 'Negative';
+    let interp    = `${strength} ${direction} Correlation`;
+
+    document.getElementById('rPearson').textContent   = r;
+    document.getElementById('rInterp').textContent    = interp;
+    document.getElementById('rSlope').textContent     = reg.slope;
+    document.getElementById('rIntercept').textContent = reg.intercept;
+    document.getElementById('rSquared').textContent   = reg.rSquared;
+    document.getElementById('rEquation').textContent  =
+      `score = ${reg.slope}·hours + ${reg.intercept}`;
+
+  } catch (err) {
+    console.error("renderStats() error:", err);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────
