@@ -4,12 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light" />
-  <title>DataSci Collab — Git Collaborative Project</title>
+  <title>DataSci Collab Dashboard</title>
 
-  <!-- Chart.js — only dependency, loaded from CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
-  <!-- Google Fonts — Courier Prime for terminal feel, DM Sans for UI -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
@@ -17,29 +15,25 @@
   />
 
   <style>
-    /* ──────────────────────────────────────────────
-      LIGHT THEME (polished) — CSS only
-      Keeps your HTML + JS behavior the same.
-    ─────────────────────────────────────────────── */
-
     :root {
-      /* Light palette */
-      --bg: #f5f7ff;          /* page background */
-      --surface: #ffffff;      /* card/panel background */
-      --surface2: #f1f4ff;     /* slightly tinted surface */
-      --border: #d9def0;       /* subtle border */
-      --accent: #d39b10;       /* amber */
-      --accent2: #0ea5a6;      /* teal */
-      --accent3: #e05264;      /* coral */
-      --text: #0f172a;         /* main text */
-      --text-dim: #55627a;     /* muted text */
+      --bg: #f5f7ff;
+      --surface: #ffffff;
+      --surface2: #f1f4ff;
+      --border: #d9def0;
+
+      --accent: #d39b10;
+      --accent2: #0ea5a6;
+      --accent3: #e05264;
+
+      --text: #0f172a;
+      --text-dim: #55627a;
+
       --mono: 'Courier Prime', monospace;
       --sans: 'DM Sans', sans-serif;
+
       --radius: 10px;
       --radius-lg: 16px;
-      --glow: 0 12px 30px rgba(211,155,16,0.18);
 
-      /* Extras */
       --shadow-sm: 0 10px 24px rgba(15,23,42,0.08);
       --shadow-md: 0 16px 40px rgba(15,23,42,0.10);
       --ring: 0 0 0 3px rgba(211,155,16,0.20);
@@ -61,7 +55,6 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Small global niceties */
     code {
       font-family: var(--mono);
       font-size: 0.95em;
@@ -72,7 +65,6 @@
       color: #0b4f50;
     }
 
-    /* ── HEADER ─────────────────────────────────── */
     header {
       background: rgba(255,255,255,0.82);
       border-bottom: 1px solid var(--border);
@@ -116,7 +108,6 @@
       color: #0b4f50;
       box-shadow: 0 10px 20px rgba(15,23,42,0.06);
     }
-
     .git-badge strong { color: var(--text); }
 
     .git-badge .dot {
@@ -132,89 +123,12 @@
       50% { opacity: 0.35; }
     }
 
-    /* ── MAIN LAYOUT ─────────────────────────────── */
     main {
       max-width: 1200px;
       margin: 0 auto;
       padding: 44px 22px;
     }
 
-    /* ── CONTRIBUTION CARDS ─────────────────────── */
-    .contrib-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
-      margin-bottom: 44px;
-    }
-
-    .contrib-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .contrib-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .contrib-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-    }
-
-    .contrib-card.s1::before { background: var(--accent); }
-    .contrib-card.s2::before { background: var(--accent2); }
-    .contrib-card.s3::before { background: var(--accent3); }
-
-    .contrib-card .student-tag {
-      font-family: var(--mono);
-      font-size: 0.70rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      color: var(--text-dim);
-    }
-
-    .contrib-card h3 {
-      font-size: 1.0rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: #0f172a;
-    }
-
-    .contrib-card ul {
-      list-style: none;
-      font-size: 0.86rem;
-      color: var(--text-dim);
-      line-height: 1.75;
-    }
-
-    .contrib-card ul li::before {
-      content: '→ ';
-      color: rgba(85,98,122,0.9);
-    }
-
-    .branch-tag {
-      display: inline-block;
-      margin-top: 14px;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 5px 10px;
-      color: var(--text-dim);
-    }
-
-    /* ── SECTION WRAPPERS ────────────────────────── */
     .section { margin-bottom: 56px; }
 
     .section-header {
@@ -249,7 +163,6 @@
     .tag-s2 { background: rgba(14,165,166,0.12); color: #056b6c; border-color: rgba(14,165,166,0.22); }
     .tag-s3 { background: rgba(224,82,100,0.10); color: #8a1f2a; border-color: rgba(224,82,100,0.22); }
 
-    /* ── PANEL / CARD ────────────────────────────── */
     .panel {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -258,31 +171,6 @@
       box-shadow: var(--shadow-md);
     }
 
-    /* ── TODO CALLOUT ────────────────────────────── */
-    .todo-callout {
-      background: rgba(211,155,16,0.10);
-      border: 1px solid rgba(211,155,16,0.24);
-      border-left: 5px solid var(--accent);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      color: #7a5700;
-      margin-bottom: 18px;
-      line-height: 1.75;
-      box-shadow: 0 10px 22px rgba(15,23,42,0.06);
-    }
-
-    /* IMPORTANT: fix the PDF-parsed invalid property (letter￾spacing) */
-    .todo-callout strong {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 0.75rem;
-      letter-spacing: 1px; /* fixed */
-      color: #7a5700;
-    }
-
-    /* ── TOOLBAR ─────────────────────────────────── */
     .toolbar {
       display: flex;
       gap: 12px;
@@ -326,7 +214,7 @@
       border-radius: 12px;
       cursor: pointer;
       letter-spacing: 0.5px;
-      transition: transform 0.12s, box-shadow 0.2s, border-color 0.2s, color 0.2s, background 0.2s;
+      transition: transform 0.12s, box-shadow 0.2s, border-color 0.2s, color 0.2s;
       min-height: 40px;
       box-shadow: 0 10px 18px rgba(15,23,42,0.06);
     }
@@ -340,13 +228,6 @@
 
     button:active { transform: translateY(0); }
 
-    button.primary {
-      background: linear-gradient(180deg, #eab52a, #d39b10);
-      border-color: rgba(211,155,16,0.85);
-      color: #0f172a;
-      font-weight: 800;
-    }
-
     .count-badge {
       font-family: var(--mono);
       font-size: 0.78rem;
@@ -358,7 +239,6 @@
       background: rgba(255,255,255,0.7);
     }
 
-    /* ── TABLE STYLES ────────────────────────────── */
     .table-wrap {
       overflow: auto;
       border-radius: 14px;
@@ -373,7 +253,7 @@
       border-spacing: 0;
       font-size: 0.84rem;
       font-family: var(--mono);
-      min-width: 980px; /* helps on small screens with horizontal scroll */
+      min-width: 980px;
     }
 
     thead th {
@@ -403,15 +283,17 @@
       vertical-align: middle;
     }
 
-    tbody td.numeric { color: #0b6f70; text-align: right; font-variant-numeric: tabular-nums; }
+    tbody td.numeric {
+      color: #0b6f70;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
 
-    /* Grade styling (kept consistent with your logic) */
     tbody td.grade-A { color: #1a7f37; background: rgba(26,127,55,0.08); font-weight: 800; text-align: center; }
     tbody td.grade-B { color: #7a5700; background: rgba(211,155,16,0.10); font-weight: 800; text-align: center; }
     tbody td.grade-C { color: #8a1f2a; background: rgba(224,82,100,0.10); font-weight: 800; text-align: center; }
     tbody td.grade-D { color: #b42318; background: rgba(180,35,24,0.10); font-weight: 800; text-align: center; }
 
-    /* ── CHART GRID ──────────────────────────────── */
     .chart-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -439,7 +321,7 @@
 
     .chart-placeholder {
       height: 210px;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       flex-direction: column;
@@ -452,9 +334,6 @@
       background: rgba(241,244,255,0.6);
     }
 
-    .chart-placeholder span { font-size: 1.8rem; }
-
-    /* ── STATS GRID ──────────────────────────────── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -499,7 +378,6 @@
       color: rgba(85,98,122,0.5);
     }
 
-    /* ── ANALYSIS PANELS ─────────────────────────── */
     .analysis-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -540,7 +418,6 @@
     .stat-list .key { color: var(--text-dim); }
     .stat-list .val { color: #0b6f70; font-weight: 700; }
 
-    /* ── FOOTER ──────────────────────────────────── */
     footer {
       text-align: center;
       margin-top: 64px;
@@ -550,7 +427,6 @@
       letter-spacing: 1px;
     }
 
-    /* ── RESPONSIVE ──────────────────────────────── */
     @media (max-width: 900px) {
       .chart-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -566,68 +442,19 @@
   <header>
     <div class="header-left">
       <h1>DataSci Collab Dashboard</h1>
-      <p>Student Performance Dataset · Git Collaborative Activity</p>
+      <p>Student Performance Dataset</p>
     </div>
     <div class="git-badge">
       <span class="dot"></span>
-      branch: <strong id="currentBranch">feature/statistics</strong>
+      branch: <strong id="currentBranch">main</strong>
     </div>
   </header>
 
   <main>
-    <div class="contrib-grid">
-      <div class="contrib-card s1">
-        <div class="student-tag">Student 1 · Repo Owner</div>
-        <h3>Dataset Engine &amp; Project Setup</h3>
-        <ul>
-          <li>Initialize the GitHub repository</li>
-          <li>Implement <code>loadDataset()</code></li>
-          <li>Implement <code>renderTable()</code></li>
-          <li>Implement filter &amp; sort logic</li>
-          <li>Invite collaborators &amp; protect main</li>
-        </ul>
-        <span class="branch-tag">branch: main (setup) → feature/data-engine</span>
-      </div>
-
-      <div class="contrib-card s2">
-        <div class="student-tag">Student 2 · Collaborator</div>
-        <h3>Data Visualization Layer</h3>
-        <ul>
-          <li>Implement <code>drawBarChart()</code></li>
-          <li>Implement <code>drawScatterPlot()</code></li>
-          <li>Implement <code>drawHistogram()</code></li>
-          <li>Implement <code>drawPieChart()</code></li>
-          <li>Open and get PR merged into main</li>
-        </ul>
-        <span class="branch-tag">branch: feature/visualization</span>
-      </div>
-
-      <div class="contrib-card s3">
-        <div class="student-tag">Student 3 · Collaborator</div>
-        <h3>Statistical Analysis Engine</h3>
-        <ul>
-          <li>Implement <code>mean()</code>, <code>median()</code>, <code>mode()</code></li>
-          <li>Implement <code>stdDev()</code>, <code>variance()</code></li>
-          <li>Implement <code>pearsonCorr()</code></li>
-          <li>Implement <code>linearRegression()</code></li>
-          <li>Open and get PR merged into main</li>
-        </ul>
-        <span class="branch-tag">branch: feature/statistics</span>
-      </div>
-    </div>
-
-    <!-- SECTION 1 -->
     <section class="section" id="sec-data">
       <div class="section-header">
         <h2>01 · Dataset Explorer</h2>
-        <span class="owner-tag tag-s1">Student 1 · Repo Owner</span>
-      </div>
-
-      <div class="todo-callout">
-        <strong>⚠ TODO — Student 1</strong>
-        Implement the three functions marked below: <code>loadDataset()</code>,
-        <code>renderTable(data)</code>, and wire the filter/sort controls. The raw dataset object (RAW_DATA) is already
-        provided. After completion, commit and open your PR to main.
+        <span class="owner-tag tag-s1">Data</span>
       </div>
 
       <div class="panel">
@@ -665,7 +492,7 @@
             <tbody id="tableBody">
               <tr>
                 <td colspan="10" style="text-align:center; color:var(--text-dim); font-family:var(--mono); padding:40px;">
-                  ⌛ Waiting for Student 1 to implement loadDataset() and renderTable()
+                  Loading data...
                 </td>
               </tr>
             </tbody>
@@ -674,64 +501,43 @@
       </div>
     </section>
 
-    <!-- SECTION 2 -->
     <section class="section" id="sec-viz">
       <div class="section-header">
         <h2>02 · Visualizations</h2>
-        <span class="owner-tag tag-s2">Student 2 · Collaborator</span>
+        <span class="owner-tag tag-s2">Charts</span>
       </div>
 
       <div class="chart-grid">
         <div class="chart-box">
           <h4>Study Hours vs Final Score</h4>
-          <div class="chart-placeholder" id="barPlaceholder" style="display:none;">
-            <span>📊</span>
-            Student 2: implement drawBarChart()
-          </div>
+          <div class="chart-placeholder" id="barPlaceholder">Loading chart…</div>
           <canvas id="barChart"></canvas>
         </div>
 
         <div class="chart-box">
           <h4>Attendance % vs Final Score</h4>
-          <div class="chart-placeholder" id="scatterPlaceholder" style="display:none;">
-            <span>🔵</span>
-            Student 2: implement drawScatterPlot()
-          </div>
+          <div class="chart-placeholder" id="scatterPlaceholder">Loading chart…</div>
           <canvas id="scatterChart"></canvas>
         </div>
 
         <div class="chart-box">
           <h4>Final Score Distribution</h4>
-          <div class="chart-placeholder" id="histPlaceholder" style="display:none;">
-            <span>📈</span>
-            Student 2: implement drawHistogram()
-          </div>
+          <div class="chart-placeholder" id="histPlaceholder">Loading chart…</div>
           <canvas id="histChart"></canvas>
         </div>
 
         <div class="chart-box">
           <h4>Grade Distribution</h4>
-          <div class="chart-placeholder" id="piePlaceholder" style="display:none;">
-            <span>🍕</span>
-            Student 2: implement drawPieChart()
-          </div>
+          <div class="chart-placeholder" id="piePlaceholder">Loading chart…</div>
           <canvas id="pieChart"></canvas>
         </div>
       </div>
     </section>
 
-    <!-- SECTION 3 -->
     <section class="section" id="sec-stats">
       <div class="section-header">
         <h2>03 · Statistical Analysis</h2>
-        <span class="owner-tag tag-s3">Student 3 · Collaborator</span>
-      </div>
-
-      <div class="todo-callout" style="border-left-color: var(--accent3); color: #8a1f2a; background: rgba(224,82,100,0.08); border-color: rgba(224,82,100,0.22);">
-        <strong>⚠ TODO — Student 3</strong>
-        Implement all seven statistical functions below the comment block in the JS section. Then call
-        <code>renderStats(window.DS)</code> inside <code>onDataReady()</code>. All placeholder "—" values below should be
-        replaced by computed results.
+        <span class="owner-tag tag-s3">Stats</span>
       </div>
 
       <div class="stats-grid">
@@ -786,14 +592,12 @@
   </main>
 
   <footer>
-    DS COLLAB PROJECT · COMPUTER SCIENCE DEPT · GIT COLLABORATIVE ACTIVITY
-    <br />Each student's contribution is tracked via commits, branches, and pull requests.
+    DataSci Collab Dashboard
   </footer>
 
   <script>
     "use strict";
 
-    /* SHARED DATASET (read-only — do NOT modify) */
     const RAW_DATA = [
       { name:"Ana Reyes", studyHours:18, attendance:95, midterm:87, score:91, assignments:10, sleep:7, job:false, grade:"A" },
       { name:"Ben Santos", studyHours:10, attendance:78, midterm:65, score:68, assignments:7, sleep:6, job:true, grade:"C" },
@@ -820,13 +624,17 @@
     window.DS = [];
     window.CHARTS = {};
 
+    function setDisplay(id, displayValue) {
+      const el = document.getElementById(id);
+      if (el) el.style.display = displayValue;
+    }
+
     function onDataReady() {
       initCharts();
       renderStats(window.DS);
-      console.log("✅ onDataReady() fired. window.DS has", window.DS.length, "rows.");
+      console.log("onDataReady() fired. window.DS has", window.DS.length, "rows.");
     }
 
-    /* STUDENT 1 — DATASET ENGINE & TABLE */
     function loadDataset() {
       try {
         window.DS = Array.isArray(RAW_DATA) ? RAW_DATA.map(r => ({ ...r })) : [];
@@ -844,10 +652,7 @@
       const rowCountEl = document.getElementById("rowCount");
       const safeData = Array.isArray(data) ? data : [];
 
-      if (!tbody) {
-        console.error("renderTable(): #tableBody not found in DOM.");
-        return;
-      }
+      if (!tbody) return;
 
       tbody.textContent = "";
       if (rowCountEl) rowCountEl.textContent = `${safeData.length} rows`;
@@ -867,16 +672,16 @@
       }
 
       const cols = [
-        { key: "__index", label: "#" },
-        { key: "name", label: "Student Name" },
-        { key: "studyHours", label: "Study Hours/Week", numeric: true },
-        { key: "attendance", label: "Attendance %", numeric: true },
-        { key: "midterm", label: "Midterm Score", numeric: true },
-        { key: "score", label: "Final Score", numeric: true },
-        { key: "assignments", label: "Assignments Done", numeric: true },
-        { key: "sleep", label: "Sleep Hrs/Night", numeric: true },
-        { key: "job", label: "Part-time Job" },
-        { key: "grade", label: "Grade", grade: true }
+        { key: "__index" },
+        { key: "name" },
+        { key: "studyHours", numeric: true },
+        { key: "attendance", numeric: true },
+        { key: "midterm", numeric: true },
+        { key: "score", numeric: true },
+        { key: "assignments", numeric: true },
+        { key: "sleep", numeric: true },
+        { key: "job" },
+        { key: "grade", grade: true }
       ];
 
       const frag = document.createDocumentFragment();
@@ -917,9 +722,7 @@
       const base = Array.isArray(window.DS) ? window.DS : [];
 
       let result = base;
-      if (filterText) {
-        result = base.filter(d => (d?.name ?? "").toLowerCase().includes(filterText));
-      }
+      if (filterText) result = base.filter(d => (d?.name ?? "").toLowerCase().includes(filterText));
 
       if (sortKey) {
         const copy = [...result];
@@ -932,7 +735,6 @@
           if (sortKey === "name") {
             return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
           }
-
           if (sortKey === "grade") {
             const ar = gradeRank[String(av ?? "").toUpperCase()] ?? 999;
             const br = gradeRank[String(bv ?? "").toUpperCase()] ?? 999;
@@ -974,9 +776,7 @@
           if (e.key === "Enter") applyFilterSort();
         });
       }
-      if (sortEl) {
-        sortEl.addEventListener("change", () => applyFilterSort());
-      }
+      if (sortEl) sortEl.addEventListener("change", () => applyFilterSort());
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -984,47 +784,49 @@
       loadDataset();
     });
 
-    /* STUDENT 2 — VISUALIZATION LAYER */
     function initCharts() {
-      drawBarChart('barChart', window.DS);
-      drawScatterPlot('scatterChart', window.DS);
-      drawHistogram('histChart', window.DS);
-      drawPieChart('pieChart', window.DS);
+      drawBarChart("barChart", window.DS);
+      drawScatterPlot("scatterChart", window.DS);
+      drawHistogram("histChart", window.DS);
+      drawPieChart("pieChart", window.DS);
     }
 
     function drawBarChart(canvasId, data) {
       if (window.CHARTS[canvasId]) window.CHARTS[canvasId].destroy();
 
       const sorted = [...data].sort((a, b) => a.studyHours - b.studyHours);
-      const labels = sorted.map(d => d.name.split(' ')[0]);
+      const labels = sorted.map(d => d.name.split(" ")[0]);
       const scores = sorted.map(d => d.score);
       const hours = sorted.map(d => d.studyHours);
 
-      const ctx = document.getElementById(canvasId).getContext('2d');
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
       const defaults = getChartDefaults();
 
       window.CHARTS[canvasId] = new Chart(ctx, {
-        type: 'bar',
+        type: "bar",
         data: {
           labels,
           datasets: [
             {
-              label: 'Final Score',
+              label: "Final Score",
               data: scores,
-              backgroundColor: 'rgba(211, 155, 16, 0.55)',
-              borderColor: '#d39b10',
+              backgroundColor: "rgba(211, 155, 16, 0.55)",
+              borderColor: "#d39b10",
               borderWidth: 1,
               borderRadius: 6,
-              order: 1,
+              order: 1
             },
             {
-              label: 'Study Hours',
+              label: "Study Hours",
               data: hours,
-              backgroundColor: 'rgba(14, 165, 166, 0.45)',
-              borderColor: '#0ea5a6',
+              backgroundColor: "rgba(14, 165, 166, 0.45)",
+              borderColor: "#0ea5a6",
               borderWidth: 1,
               borderRadius: 6,
-              order: 2,
+              order: 2
             }
           ]
         },
@@ -1032,22 +834,26 @@
           ...defaults,
           scales: {
             ...defaults.scales,
-            y: { ...defaults.scales.y, min: 0, max: 100 },
+            y: { ...defaults.scales.y, min: 0, max: 100 }
           }
         }
       });
 
-      document.getElementById('barPlaceholder').style.display = 'none';
-      document.getElementById(canvasId).style.display = 'block';
+      setDisplay("barPlaceholder", "none");
+      canvas.style.display = "block";
     }
 
     function drawScatterPlot(canvasId, data) {
       if (window.CHARTS[canvasId]) window.CHARTS[canvasId].destroy();
 
-      const points = data.map(d => ({ x: d.attendance, y: d.score, name: d.name.split(' ')[0] }));
+      const points = data.map(d => ({ x: d.attendance, y: d.score, name: d.name.split(" ")[0] }));
 
       const xVals = data.map(d => d.attendance);
       const yVals = data.map(d => d.score);
+
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
       const xMean = xVals.reduce((a, b) => a + b, 0) / xVals.length;
       const yMean = yVals.reduce((a, b) => a + b, 0) / yVals.length;
       const num = xVals.reduce((sum, x, i) => sum + (x - xMean) * (yVals[i] - yMean), 0);
@@ -1062,33 +868,33 @@
         { x: maxX, y: parseFloat((slope * maxX + intercept).toFixed(2)) }
       ];
 
-      const ctx = document.getElementById(canvasId).getContext('2d');
+      const ctx = canvas.getContext("2d");
       const defaults = getChartDefaults();
 
       window.CHARTS[canvasId] = new Chart(ctx, {
-        type: 'scatter',
+        type: "scatter",
         data: {
           datasets: [
             {
-              label: 'Students',
+              label: "Students",
               data: points,
-              backgroundColor: 'rgba(14, 165, 166, 0.70)',
-              borderColor: '#0ea5a6',
+              backgroundColor: "rgba(14, 165, 166, 0.70)",
+              borderColor: "#0ea5a6",
               pointRadius: 6,
               pointHoverRadius: 8,
-              order: 2,
+              order: 2
             },
             {
-              label: 'Trend Line',
+              label: "Trend Line",
               data: trendLine,
-              type: 'line',
-              borderColor: 'rgba(211, 155, 16, 0.85)',
+              type: "line",
+              borderColor: "rgba(211, 155, 16, 0.85)",
               borderWidth: 2,
               borderDash: [6, 4],
               pointRadius: 0,
               fill: false,
               tension: 0,
-              order: 1,
+              order: 1
             }
           ]
         },
@@ -1112,20 +918,20 @@
           scales: {
             ...defaults.scales,
             x: { ...defaults.scales.x, min: 50, max: 100 },
-            y: { ...defaults.scales.y, min: 40, max: 100 },
+            y: { ...defaults.scales.y, min: 40, max: 100 }
           }
         }
       });
 
-      document.getElementById('scatterPlaceholder').style.display = 'none';
-      document.getElementById(canvasId).style.display = 'block';
+      setDisplay("scatterPlaceholder", "none");
+      canvas.style.display = "block";
     }
 
     function drawHistogram(canvasId, data) {
       if (window.CHARTS[canvasId]) window.CHARTS[canvasId].destroy();
 
       const binEdges = [40, 50, 60, 70, 80, 90, 101];
-      const binLabels = ['40s', '50s', '60s', '70s', '80s', '90s+'];
+      const binLabels = ["40s", "50s", "60s", "70s", "80s", "90s+"];
       const counts = new Array(binLabels.length).fill(0);
 
       data.forEach(d => {
@@ -1137,22 +943,25 @@
         }
       });
 
-      const ctx = document.getElementById(canvasId).getContext('2d');
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
       const defaults = getChartDefaults();
 
       window.CHARTS[canvasId] = new Chart(ctx, {
-        type: 'bar',
+        type: "bar",
         data: {
           labels: binLabels,
           datasets: [{
-            label: 'Number of Students',
+            label: "Number of Students",
             data: counts,
-            backgroundColor: 'rgba(224, 82, 100, 0.55)',
-            borderColor: '#e05264',
+            backgroundColor: "rgba(224, 82, 100, 0.55)",
+            borderColor: "#e05264",
             borderWidth: 1,
             borderRadius: 6,
             barPercentage: 1.0,
-            categoryPercentage: 1.0,
+            categoryPercentage: 1.0
           }]
         },
         options: {
@@ -1168,8 +977,8 @@
         }
       });
 
-      document.getElementById('histPlaceholder').style.display = 'none';
-      document.getElementById(canvasId).style.display = 'block';
+      setDisplay("histPlaceholder", "none");
+      canvas.style.display = "block";
     }
 
     function drawPieChart(canvasId, data) {
@@ -1178,37 +987,40 @@
       const gradeCounts = { A: 0, B: 0, C: 0, D: 0 };
       data.forEach(d => { if (gradeCounts[d.grade] !== undefined) gradeCounts[d.grade]++; });
 
-      const labels = ['A', 'B', 'C', 'D'];
+      const labels = ["A", "B", "C", "D"];
       const counts = labels.map(g => gradeCounts[g]);
       const total = counts.reduce((a, b) => a + b, 0);
 
-      const ctx = document.getElementById(canvasId).getContext('2d');
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
       const defaults = getChartDefaults();
 
       window.CHARTS[canvasId] = new Chart(ctx, {
-        type: 'doughnut',
+        type: "doughnut",
         data: {
           labels,
           datasets: [{
             data: counts,
-            backgroundColor: ['#22c55e', '#d39b10', '#0ea5a6', '#e05264'],
-            borderColor: '#ffffff',
+            backgroundColor: ["#22c55e", "#d39b10", "#0ea5a6", "#e05264"],
+            borderColor: "#ffffff",
             borderWidth: 3,
-            hoverOffset: 8,
+            hoverOffset: 8
           }]
         },
         options: {
           ...defaults,
-          cutout: '55%',
+          cutout: "55%",
           plugins: {
             ...defaults.plugins,
-            legend: { ...defaults.plugins.legend, position: 'bottom' },
+            legend: { ...defaults.plugins.legend, position: "bottom" },
             tooltip: {
               ...defaults.plugins.tooltip,
               callbacks: {
                 label: (ctx) => {
                   const pct = ((ctx.raw / total) * 100).toFixed(1);
-                  return ` Grade ${ctx.label}: ${ctx.raw} students (${pct}%)`;
+                  return `Grade ${ctx.label}: ${ctx.raw} (${pct}%)`;
                 }
               }
             }
@@ -1216,43 +1028,41 @@
         }
       });
 
-      document.getElementById('piePlaceholder').style.display = 'none';
-      document.getElementById(canvasId).style.display = 'block';
+      setDisplay("piePlaceholder", "none");
+      canvas.style.display = "block";
     }
 
-    /* Chart.js defaults tuned for the LIGHT theme (visual only) */
     function getChartDefaults() {
       return {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
           legend: {
-            labels: { color: '#55627a', font: { family: 'Courier Prime', size: 11 } }
+            labels: { color: "#55627a", font: { family: "Courier Prime", size: 11 } }
           },
           tooltip: {
-            backgroundColor: '#ffffff',
-            borderColor: '#d9def0',
+            backgroundColor: "#ffffff",
+            borderColor: "#d9def0",
             borderWidth: 1,
-            titleColor: '#7a5700',
-            bodyColor: '#0f172a',
-            titleFont: { family: 'Courier Prime' },
-            bodyFont: { family: 'Courier Prime' }
+            titleColor: "#7a5700",
+            bodyColor: "#0f172a",
+            titleFont: { family: "Courier Prime" },
+            bodyFont: { family: "Courier Prime" }
           }
         },
         scales: {
           x: {
-            ticks: { color: '#55627a', font: { family: 'Courier Prime', size: 10 } },
-            grid: { color: 'rgba(217,222,240,0.95)' }
+            ticks: { color: "#55627a", font: { family: "Courier Prime", size: 10 } },
+            grid: { color: "rgba(217,222,240,0.95)" }
           },
           y: {
-            ticks: { color: '#55627a', font: { family: 'Courier Prime', size: 10 } },
-            grid: { color: 'rgba(217,222,240,0.95)' }
+            ticks: { color: "#55627a", font: { family: "Courier Prime", size: 10 } },
+            grid: { color: "rgba(217,222,240,0.95)" }
           }
         }
       };
     }
 
-    /* STUDENT 3 — STATS ENGINE */
     function mean(arr) {
       const sum = arr.reduce((acc, val) => acc + val, 0);
       return parseFloat((sum / arr.length).toFixed(2));
@@ -1273,7 +1083,7 @@
         .filter(key => freq[key] === maxCount)
         .map(Number)
         .sort((a, b) => a - b);
-      return modes.join(' & ');
+      return modes.join(" & ");
     }
 
     function variance(arr) {
@@ -1314,38 +1124,34 @@
         const scores = data.map(d => d.score);
         const hours = data.map(d => d.studyHours);
 
-        // ── Summary stat cards ──────────────────────────────────────
-        // (Fixed: the PDF text had a non-comment dashed line that would break JS)
-        document.getElementById('statMean').textContent = mean(scores);
-        document.getElementById('statMedian').textContent = median(scores);
-        document.getElementById('statStdDev').textContent = stdDev(scores);
-        document.getElementById('statMode').textContent = mode(scores);
+        document.getElementById("statMean").textContent = mean(scores);
+        document.getElementById("statMedian").textContent = median(scores);
+        document.getElementById("statStdDev").textContent = stdDev(scores);
+        document.getElementById("statMode").textContent = mode(scores);
 
         const minVal = Math.min(...scores);
         const maxVal = Math.max(...scores);
 
-        document.getElementById('dCount').textContent = scores.length;
-        document.getElementById('dMin').textContent = minVal;
-        document.getElementById('dMax').textContent = maxVal;
-        document.getElementById('dRange').textContent = maxVal - minVal;
-        document.getElementById('dVariance').textContent = variance(scores);
-        document.getElementById('dStdDev').textContent = stdDev(scores);
+        document.getElementById("dCount").textContent = scores.length;
+        document.getElementById("dMin").textContent = minVal;
+        document.getElementById("dMax").textContent = maxVal;
+        document.getElementById("dRange").textContent = maxVal - minVal;
+        document.getElementById("dVariance").textContent = variance(scores);
+        document.getElementById("dStdDev").textContent = stdDev(scores);
 
         const r = pearsonCorr(hours, scores);
         const reg = linearRegression(hours, scores);
         const absR = Math.abs(r);
 
-        let strength = absR >= 0.7 ? 'Strong' : absR >= 0.4 ? 'Moderate' : 'Weak';
-        let direction = r >= 0 ? 'Positive' : 'Negative';
-        let interp = `${strength} ${direction} Correlation`;
+        const strength = absR >= 0.7 ? "Strong" : absR >= 0.4 ? "Moderate" : "Weak";
+        const direction = r >= 0 ? "Positive" : "Negative";
 
-        document.getElementById('rPearson').textContent = r;
-        document.getElementById('rInterp').textContent = interp;
-        document.getElementById('rSlope').textContent = reg.slope;
-        document.getElementById('rIntercept').textContent = reg.intercept;
-        document.getElementById('rSquared').textContent = reg.rSquared;
-        document.getElementById('rEquation').textContent =
-          `score = ${reg.slope}·hours + ${reg.intercept}`;
+        document.getElementById("rPearson").textContent = r;
+        document.getElementById("rInterp").textContent = `${strength} ${direction} Correlation`;
+        document.getElementById("rSlope").textContent = reg.slope;
+        document.getElementById("rIntercept").textContent = reg.intercept;
+        document.getElementById("rSquared").textContent = reg.rSquared;
+        document.getElementById("rEquation").textContent = `score = ${reg.slope}·hours + ${reg.intercept}`;
       } catch (err) {
         console.error("renderStats() error:", err);
       }
