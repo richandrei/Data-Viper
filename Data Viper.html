@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light" />
-  <title>DataSci Collab Dashboard</title>
+  <title>Mobile Specs Dashboard</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
@@ -53,16 +53,6 @@
         linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0));
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-    }
-
-    code {
-      font-family: var(--mono);
-      font-size: 0.95em;
-      padding: 0.12em 0.35em;
-      border-radius: 8px;
-      background: rgba(14,165,166,0.10);
-      border: 1px solid rgba(217,222,240,0.9);
-      color: #0b4f50;
     }
 
     header {
@@ -117,7 +107,6 @@
       background: var(--accent2);
       animation: pulse 2s infinite;
     }
-
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.35; }
@@ -225,7 +214,6 @@
       box-shadow: 0 14px 24px rgba(15,23,42,0.10);
       transform: translateY(-1px);
     }
-
     button:active { transform: translateY(0); }
 
     .count-badge {
@@ -253,7 +241,7 @@
       border-spacing: 0;
       font-size: 0.84rem;
       font-family: var(--mono);
-      min-width: 980px;
+      min-width: 1100px;
     }
 
     thead th {
@@ -289,10 +277,19 @@
       font-variant-numeric: tabular-nums;
     }
 
-    tbody td.grade-A { color: #1a7f37; background: rgba(26,127,55,0.08); font-weight: 800; text-align: center; }
-    tbody td.grade-B { color: #7a5700; background: rgba(211,155,16,0.10); font-weight: 800; text-align: center; }
-    tbody td.grade-C { color: #8a1f2a; background: rgba(224,82,100,0.10); font-weight: 800; text-align: center; }
-    tbody td.grade-D { color: #b42318; background: rgba(180,35,24,0.10); font-weight: 800; text-align: center; }
+    tbody td.bool-yes {
+      color: #166534;
+      background: rgba(22,101,52,0.08);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    tbody td.bool-no {
+      color: #b42318;
+      background: rgba(180,35,24,0.08);
+      font-weight: 800;
+      text-align: center;
+    }
 
     .chart-grid {
       display: grid;
@@ -318,21 +315,6 @@
     }
 
     .chart-box canvas { max-height: 260px; }
-
-    .chart-placeholder {
-      height: 210px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 10px;
-      color: var(--text-dim);
-      font-family: var(--mono);
-      font-size: 0.86rem;
-      border: 2px dashed rgba(217,222,240,1);
-      border-radius: 14px;
-      background: rgba(241,244,255,0.6);
-    }
 
     .stats-grid {
       display: grid;
@@ -370,12 +352,6 @@
       font-size: 0.75rem;
       color: var(--text-dim);
       margin-top: 6px;
-    }
-
-    .stat-placeholder {
-      font-family: var(--mono);
-      font-size: 1.2rem;
-      color: rgba(85,98,122,0.5);
     }
 
     .analysis-row {
@@ -433,7 +409,12 @@
       .analysis-row { grid-template-columns: 1fr; }
       input[type="text"] { width: 100%; }
       .count-badge { margin-left: 0; }
-      header { padding: 14px 16px; flex-direction: column; align-items: flex-start; gap: 10px; }
+      header {
+        padding: 14px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
     }
   </style>
 </head>
@@ -441,8 +422,8 @@
 <body>
   <header>
     <div class="header-left">
-      <h1>DataSci Collab Dashboard</h1>
-      <p>Student Performance Dataset</p>
+      <h1>Mobile Specs Dashboard</h1>
+      <p>Mobile Price Classification Dataset</p>
     </div>
     <div class="git-badge">
       <span class="dot"></span>
@@ -459,14 +440,19 @@
 
       <div class="panel">
         <div class="toolbar">
-          <input type="text" id="filterInput" placeholder="Filter by student name..." />
+          <input type="text" id="filterInput" placeholder="Filter by ID..." />
           <select id="sortSelect">
             <option value="">Sort by...</option>
-            <option value="name">Name</option>
-            <option value="studyHours">Study Hours</option>
-            <option value="score">Final Score</option>
-            <option value="grade">Grade</option>
-            <option value="attendance">Attendance %</option>
+            <option value="id">ID</option>
+            <option value="battery_power">Battery (mAh)</option>
+            <option value="clock_speed">Clock Speed</option>
+            <option value="int_memory">Internal Memory (GB)</option>
+            <option value="m_dep">Depth (cm)</option>
+            <option value="mobile_wt">Weight</option>
+            <option value="fc">Front Cam (MP)</option>
+            <option value="blue">Bluetooth</option>
+            <option value="dual_sim">Dual SIM</option>
+            <option value="four_g">4G</option>
           </select>
           <button onclick="applyFilterSort()">Apply</button>
           <button onclick="resetTable()">Reset</button>
@@ -478,20 +464,21 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Student Name</th>
-                <th>Study Hours/Week</th>
-                <th>Attendance %</th>
-                <th>Midterm Score</th>
-                <th>Final Score</th>
-                <th>Assignments Done</th>
-                <th>Sleep Hrs/Night</th>
-                <th>Part-time Job</th>
-                <th>Grade</th>
+                <th>ID</th>
+                <th>Battery (mAh)</th>
+                <th>Bluetooth</th>
+                <th>Clock Speed</th>
+                <th>Dual SIM</th>
+                <th>Front Cam (MP)</th>
+                <th>4G</th>
+                <th>Internal Mem (GB)</th>
+                <th>Depth (cm)</th>
+                <th>Weight</th>
               </tr>
             </thead>
             <tbody id="tableBody">
               <tr>
-                <td colspan="10" style="text-align:center; color:var(--text-dim); font-family:var(--mono); padding:40px;">
+                <td colspan="11" style="text-align:center; color:var(--text-dim); font-family:var(--mono); padding:40px;">
                   Loading data...
                 </td>
               </tr>
@@ -509,26 +496,22 @@
 
       <div class="chart-grid">
         <div class="chart-box">
-          <h4>Study Hours vs Final Score</h4>
-          <div class="chart-placeholder" id="barPlaceholder">Loading chart…</div>
+          <h4>Top Battery Capacity (mAh) by ID</h4>
           <canvas id="barChart"></canvas>
         </div>
 
         <div class="chart-box">
-          <h4>Attendance % vs Final Score</h4>
-          <div class="chart-placeholder" id="scatterPlaceholder">Loading chart…</div>
+          <h4>Internal Memory (GB) vs Battery (mAh)</h4>
           <canvas id="scatterChart"></canvas>
         </div>
 
         <div class="chart-box">
-          <h4>Final Score Distribution</h4>
-          <div class="chart-placeholder" id="histPlaceholder">Loading chart…</div>
+          <h4>Battery Capacity Distribution</h4>
           <canvas id="histChart"></canvas>
         </div>
 
         <div class="chart-box">
-          <h4>Grade Distribution</h4>
-          <div class="chart-placeholder" id="piePlaceholder">Loading chart…</div>
+          <h4>4G Support Breakdown</h4>
           <canvas id="pieChart"></canvas>
         </div>
       </div>
@@ -542,30 +525,30 @@
 
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-label">Mean Score</div>
-          <div class="stat-value" id="statMean"><span class="stat-placeholder">—</span></div>
-          <div class="stat-sub">Final Score</div>
+          <div class="stat-label">Mean</div>
+          <div class="stat-value" id="statMean">—</div>
+          <div class="stat-sub">Battery (mAh)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Median Score</div>
-          <div class="stat-value" id="statMedian"><span class="stat-placeholder">—</span></div>
-          <div class="stat-sub">Final Score</div>
+          <div class="stat-label">Median</div>
+          <div class="stat-value" id="statMedian">—</div>
+          <div class="stat-sub">Battery (mAh)</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Std Deviation</div>
-          <div class="stat-value" id="statStdDev"><span class="stat-placeholder">—</span></div>
-          <div class="stat-sub">Final Score</div>
+          <div class="stat-value" id="statStdDev">—</div>
+          <div class="stat-sub">Battery (mAh)</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Mode</div>
-          <div class="stat-value" id="statMode"><span class="stat-placeholder">—</span></div>
-          <div class="stat-sub">Final Score</div>
+          <div class="stat-value" id="statMode">—</div>
+          <div class="stat-sub">Battery (mAh)</div>
         </div>
       </div>
 
       <div class="analysis-row">
         <div class="analysis-panel">
-          <h4>Descriptive Statistics — Final Score</h4>
+          <h4>Descriptive Statistics — Battery (mAh)</h4>
           <ul class="stat-list">
             <li><span class="key">Count (n)</span> <span class="val" id="dCount">—</span></li>
             <li><span class="key">Min</span> <span class="val" id="dMin">—</span></li>
@@ -577,13 +560,13 @@
         </div>
 
         <div class="analysis-panel">
-          <h4>Correlation &amp; Regression (Study Hours → Score)</h4>
+          <h4>Correlation &amp; Regression (Internal Memory → Battery)</h4>
           <ul class="stat-list">
             <li><span class="key">Pearson r</span> <span class="val" id="rPearson">—</span></li>
             <li><span class="key">Interpretation</span> <span class="val" id="rInterp">—</span></li>
             <li><span class="key">Slope (m)</span> <span class="val" id="rSlope">—</span></li>
             <li><span class="key">Intercept (b)</span> <span class="val" id="rIntercept">—</span></li>
-            <li><span class="key">R² (fit quality)</span> <span class="val" id="rSquared">—</span></li>
+            <li><span class="key">R²</span> <span class="val" id="rSquared">—</span></li>
             <li><span class="key">Equation</span> <span class="val" id="rEquation">—</span></li>
           </ul>
         </div>
@@ -591,60 +574,84 @@
     </section>
   </main>
 
-  <footer>
-    DataSci Collab Dashboard
-  </footer>
+  <footer>Mobile Specs Dashboard</footer>
 
   <script>
     "use strict";
 
     const RAW_DATA = [
-      { name:"Ana Reyes", studyHours:18, attendance:95, midterm:87, score:91, assignments:10, sleep:7, job:false, grade:"A" },
-      { name:"Ben Santos", studyHours:10, attendance:78, midterm:65, score:68, assignments:7, sleep:6, job:true, grade:"C" },
-      { name:"Clara Tan", studyHours:22, attendance:98, midterm:94, score:97, assignments:10, sleep:8, job:false, grade:"A" },
-      { name:"Diego Flores", studyHours:8, attendance:60, midterm:52, score:55, assignments:5, sleep:5, job:true, grade:"D" },
-      { name:"Elena Cruz", studyHours:15, attendance:88, midterm:78, score:82, assignments:9, sleep:7, job:false, grade:"B" },
-      { name:"Felix Lim", studyHours:12, attendance:82, midterm:72, score:75, assignments:8, sleep:6, job:true, grade:"C" },
-      { name:"Grace Mendoza", studyHours:20, attendance:96, midterm:90, score:93, assignments:10, sleep:8, job:false, grade:"A" },
-      { name:"Henry Ong", studyHours:6, attendance:55, midterm:45, score:50, assignments:4, sleep:5, job:true, grade:"D" },
-      { name:"Iris Villanueva", studyHours:17, attendance:91, midterm:83, score:86, assignments:9, sleep:7, job:false, grade:"B" },
-      { name:"Jay Aquino", studyHours:14, attendance:85, midterm:76, score:79, assignments:8, sleep:7, job:false, grade:"B" },
-      { name:"Karen Delos", studyHours:9, attendance:70, midterm:60, score:63, assignments:6, sleep:6, job:true, grade:"C" },
-      { name:"Luis Ramos", studyHours:21, attendance:97, midterm:92, score:95, assignments:10, sleep:8, job:false, grade:"A" },
-      { name:"Maria Dela Cruz", studyHours:16, attendance:89, midterm:80, score:84, assignments:9, sleep:7, job:true, grade:"B" },
-      { name:"Noel Bautista", studyHours:11, attendance:75, midterm:68, score:71, assignments:7, sleep:6, job:false, grade:"C" },
-      { name:"Olivia Pascual", studyHours:19, attendance:94, midterm:88, score:90, assignments:10, sleep:8, job:false, grade:"A" },
-      { name:"Paulo Jimenez", studyHours:7, attendance:62, midterm:50, score:53, assignments:5, sleep:5, job:true, grade:"D" },
-      { name:"Quinn Serrano", studyHours:13, attendance:80, midterm:73, score:76, assignments:8, sleep:7, job:false, grade:"C" },
-      { name:"Rosa Aguilar", studyHours:23, attendance:99, midterm:96, score:98, assignments:10, sleep:9, job:false, grade:"A" },
-      { name:"Sam Torres", studyHours:10, attendance:74, midterm:66, score:69, assignments:7, sleep:6, job:true, grade:"C" },
-      { name:"Tina Guerrero", studyHours:15, attendance:87, midterm:79, score:81, assignments:9, sleep:7, job:false, grade:"B" },
+      { id:1,  battery_power:1043, blue:1, clock_speed:1.8, dual_sim:1, fc:14, four_g:0, int_memory:5,  m_dep:0.1, mobile_wt:193 },
+      { id:2,  battery_power:841,  blue:1, clock_speed:0.5, dual_sim:1, fc:4,  four_g:1, int_memory:61, m_dep:0.8, mobile_wt:191 },
+      { id:3,  battery_power:1807, blue:1, clock_speed:2.8, dual_sim:0, fc:1,  four_g:0, int_memory:27, m_dep:0.9, mobile_wt:186 },
+      { id:4,  battery_power:1546, blue:0, clock_speed:0.5, dual_sim:1, fc:18, four_g:1, int_memory:25, m_dep:0.5, mobile_wt:96  },
+      { id:5,  battery_power:1434, blue:0, clock_speed:1.4, dual_sim:0, fc:11, four_g:1, int_memory:49, m_dep:0.5, mobile_wt:108 },
+      { id:6,  battery_power:1464, blue:1, clock_speed:2.9, dual_sim:1, fc:5,  four_g:1, int_memory:50, m_dep:0.8, mobile_wt:198 },
+      { id:7,  battery_power:1718, blue:0, clock_speed:2.4, dual_sim:0, fc:1,  four_g:0, int_memory:47, m_dep:1.0, mobile_wt:156 },
+      { id:8,  battery_power:833,  blue:0, clock_speed:2.4, dual_sim:1, fc:0,  four_g:0, int_memory:62, m_dep:0.8, mobile_wt:111 },
+      { id:9,  battery_power:1111, blue:1, clock_speed:2.9, dual_sim:1, fc:9,  four_g:1, int_memory:25, m_dep:0.6, mobile_wt:101 },
+      { id:10, battery_power:1520, blue:0, clock_speed:0.5, dual_sim:0, fc:1,  four_g:0, int_memory:25, m_dep:0.5, mobile_wt:171 },
+      { id:11, battery_power:1500, blue:0, clock_speed:2.2, dual_sim:0, fc:2,  four_g:0, int_memory:55, m_dep:0.6, mobile_wt:80  },
+      { id:12, battery_power:1343, blue:0, clock_speed:2.9, dual_sim:0, fc:2,  four_g:1, int_memory:34, m_dep:0.8, mobile_wt:171 },
+      { id:13, battery_power:900,  blue:1, clock_speed:1.4, dual_sim:1, fc:0,  four_g:0, int_memory:30, m_dep:1.0, mobile_wt:87  },
+      { id:14, battery_power:1190, blue:1, clock_speed:2.2, dual_sim:1, fc:5,  four_g:0, int_memory:19, m_dep:0.9, mobile_wt:158 },
+      { id:15, battery_power:630,  blue:0, clock_speed:1.8, dual_sim:0, fc:8,  four_g:1, int_memory:51, m_dep:0.9, mobile_wt:193 },
+      { id:16, battery_power:1846, blue:1, clock_speed:1.0, dual_sim:0, fc:5,  four_g:1, int_memory:53, m_dep:0.7, mobile_wt:106 },
+      { id:17, battery_power:1985, blue:0, clock_speed:0.5, dual_sim:1, fc:14, four_g:1, int_memory:26, m_dep:1.0, mobile_wt:163 },
+      { id:18, battery_power:1042, blue:0, clock_speed:2.9, dual_sim:0, fc:5,  four_g:1, int_memory:48, m_dep:0.2, mobile_wt:186 },
+      { id:19, battery_power:1231, blue:1, clock_speed:1.7, dual_sim:1, fc:2,  four_g:1, int_memory:37, m_dep:0.2, mobile_wt:194 },
+      { id:20, battery_power:1488, blue:0, clock_speed:2.6, dual_sim:0, fc:9,  four_g:0, int_memory:37, m_dep:0.7, mobile_wt:189 },
+      { id:21, battery_power:968,  blue:0, clock_speed:0.6, dual_sim:0, fc:8,  four_g:1, int_memory:7,  m_dep:0.7, mobile_wt:151 },
+      { id:22, battery_power:529,  blue:0, clock_speed:2.6, dual_sim:1, fc:1,  four_g:0, int_memory:60, m_dep:0.5, mobile_wt:101 },
+      { id:23, battery_power:1558, blue:0, clock_speed:1.7, dual_sim:1, fc:7,  four_g:0, int_memory:50, m_dep:0.1, mobile_wt:115 },
+      { id:24, battery_power:533,  blue:1, clock_speed:0.7, dual_sim:1, fc:16, four_g:0, int_memory:58, m_dep:0.8, mobile_wt:97  },
+      { id:25, battery_power:1037, blue:0, clock_speed:1.7, dual_sim:1, fc:1,  four_g:0, int_memory:5,  m_dep:0.7, mobile_wt:125 },
+      { id:26, battery_power:1025, blue:0, clock_speed:1.6, dual_sim:1, fc:6,  four_g:1, int_memory:43, m_dep:0.7, mobile_wt:122 },
+      { id:27, battery_power:1858, blue:0, clock_speed:3.0, dual_sim:1, fc:0,  four_g:0, int_memory:17, m_dep:0.6, mobile_wt:124 },
+      { id:28, battery_power:980,  blue:0, clock_speed:0.5, dual_sim:0, fc:1,  four_g:0, int_memory:8,  m_dep:0.1, mobile_wt:91  },
+      { id:29, battery_power:644,  blue:1, clock_speed:0.5, dual_sim:1, fc:9,  four_g:0, int_memory:15, m_dep:0.2, mobile_wt:139 },
+      { id:30, battery_power:1024, blue:1, clock_speed:1.6, dual_sim:1, fc:0,  four_g:1, int_memory:38, m_dep:0.8, mobile_wt:81  },
+      { id:31, battery_power:1981, blue:0, clock_speed:2.9, dual_sim:1, fc:2,  four_g:1, int_memory:11, m_dep:0.3, mobile_wt:184 },
+      { id:32, battery_power:1380, blue:0, clock_speed:2.6, dual_sim:1, fc:15, four_g:1, int_memory:56, m_dep:0.5, mobile_wt:187 },
+      { id:33, battery_power:1557, blue:1, clock_speed:1.7, dual_sim:1, fc:1,  four_g:0, int_memory:32, m_dep:0.3, mobile_wt:152 },
+      { id:34, battery_power:1201, blue:1, clock_speed:2.2, dual_sim:1, fc:10, four_g:0, int_memory:49, m_dep:0.8, mobile_wt:175 },
+      { id:35, battery_power:1074, blue:1, clock_speed:1.2, dual_sim:0, fc:0,  four_g:0, int_memory:45, m_dep:0.8, mobile_wt:193 },
+      { id:36, battery_power:1175, blue:1, clock_speed:2.1, dual_sim:0, fc:3,  four_g:0, int_memory:33, m_dep:0.9, mobile_wt:124 },
+      { id:37, battery_power:1280, blue:0, clock_speed:0.9, dual_sim:1, fc:4,  four_g:1, int_memory:8,  m_dep:0.6, mobile_wt:96  },
+      { id:38, battery_power:1715, blue:0, clock_speed:0.6, dual_sim:1, fc:1,  four_g:1, int_memory:28, m_dep:0.4, mobile_wt:112 },
+      { id:39, battery_power:1165, blue:0, clock_speed:0.9, dual_sim:0, fc:4,  four_g:0, int_memory:40, m_dep:0.9, mobile_wt:150 },
+      { id:40, battery_power:567,  blue:0, clock_speed:2.6, dual_sim:0, fc:0,  four_g:0, int_memory:2,  m_dep:0.2, mobile_wt:87  },
+      { id:41, battery_power:1952, blue:1, clock_speed:1.4, dual_sim:0, fc:2,  four_g:0, int_memory:47, m_dep:0.8, mobile_wt:190 },
+      { id:42, battery_power:822,  blue:1, clock_speed:1.4, dual_sim:1, fc:2,  four_g:0, int_memory:43, m_dep:0.3, mobile_wt:189 },
+      { id:43, battery_power:685,  blue:1, clock_speed:0.5, dual_sim:1, fc:0,  four_g:0, int_memory:12, m_dep:0.5, mobile_wt:121 },
+      { id:44, battery_power:1388, blue:1, clock_speed:0.6, dual_sim:1, fc:12, four_g:1, int_memory:17, m_dep:0.6, mobile_wt:174 },
+      { id:45, battery_power:1972, blue:0, clock_speed:2.1, dual_sim:0, fc:2,  four_g:0, int_memory:48, m_dep:0.6, mobile_wt:188 },
+      { id:46, battery_power:1411, blue:1, clock_speed:1.7, dual_sim:0, fc:9,  four_g:1, int_memory:57, m_dep:0.5, mobile_wt:80  },
+      { id:47, battery_power:1094, blue:0, clock_speed:2.3, dual_sim:1, fc:2,  four_g:0, int_memory:20, m_dep:0.9, mobile_wt:135 },
+      { id:48, battery_power:1653, blue:0, clock_speed:0.7, dual_sim:1, fc:1,  four_g:1, int_memory:13, m_dep:0.5, mobile_wt:114 },
+      { id:49, battery_power:916,  blue:0, clock_speed:2.0, dual_sim:1, fc:9,  four_g:0, int_memory:33, m_dep:0.7, mobile_wt:142 },
+      { id:50, battery_power:1712, blue:0, clock_speed:0.8, dual_sim:0, fc:1,  four_g:0, int_memory:29, m_dep:0.3, mobile_wt:149 },
+      { id:51, battery_power:882,  blue:1, clock_speed:0.9, dual_sim:1, fc:13, four_g:0, int_memory:32, m_dep:0.8, mobile_wt:103 },
+      { id:52, battery_power:632,  blue:0, clock_speed:1.2, dual_sim:0, fc:6,  four_g:1, int_memory:33, m_dep:0.5, mobile_wt:101 }
     ];
 
     window.DS = [];
     window.CHARTS = {};
 
-    function setDisplay(id, displayValue) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = displayValue;
+    function fmtBool01(v) {
+      if (v === 1) return { text: "Yes", cls: "bool-yes" };
+      if (v === 0) return { text: "No", cls: "bool-no" };
+      return { text: "—", cls: "" };
     }
 
     function onDataReady() {
       initCharts();
       renderStats(window.DS);
-      console.log("onDataReady() fired. window.DS has", window.DS.length, "rows.");
     }
 
     function loadDataset() {
-      try {
-        window.DS = Array.isArray(RAW_DATA) ? RAW_DATA.map(r => ({ ...r })) : [];
-        renderTable(window.DS);
-        onDataReady();
-      } catch (err) {
-        console.error("loadDataset() failed:", err);
-        window.DS = [];
-        renderTable(window.DS);
-      }
+      window.DS = Array.isArray(RAW_DATA) ? RAW_DATA.map(r => ({ ...r })) : [];
+      renderTable(window.DS);
+      onDataReady();
     }
 
     function renderTable(data) {
@@ -652,15 +659,13 @@
       const rowCountEl = document.getElementById("rowCount");
       const safeData = Array.isArray(data) ? data : [];
 
-      if (!tbody) return;
-
       tbody.textContent = "";
-      if (rowCountEl) rowCountEl.textContent = `${safeData.length} rows`;
+      rowCountEl.textContent = `${safeData.length} rows`;
 
       if (safeData.length === 0) {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
-        td.colSpan = 10;
+        td.colSpan = 11;
         td.style.textAlign = "center";
         td.style.color = "var(--text-dim)";
         td.style.fontFamily = "var(--mono)";
@@ -672,16 +677,17 @@
       }
 
       const cols = [
-        { key: "__index" },
-        { key: "name" },
-        { key: "studyHours", numeric: true },
-        { key: "attendance", numeric: true },
-        { key: "midterm", numeric: true },
-        { key: "score", numeric: true },
-        { key: "assignments", numeric: true },
-        { key: "sleep", numeric: true },
-        { key: "job" },
-        { key: "grade", grade: true }
+        { key: "__index", label: "#" },
+        { key: "id", numeric: true },
+        { key: "battery_power", numeric: true },
+        { key: "blue", bool01: true },
+        { key: "clock_speed", numeric: true },
+        { key: "dual_sim", bool01: true },
+        { key: "fc", numeric: true },
+        { key: "four_g", bool01: true },
+        { key: "int_memory", numeric: true },
+        { key: "m_dep", numeric: true },
+        { key: "mobile_wt", numeric: true }
       ];
 
       const frag = document.createDocumentFragment();
@@ -691,14 +697,13 @@
 
         cols.forEach(col => {
           const td = document.createElement("td");
-          let val = (col.key === "__index") ? (idx + 1) : row?.[col.key];
 
-          if (col.key === "job") {
-            td.textContent = val === true ? "Yes" : (val === false ? "No" : "—");
-          } else if (col.grade) {
-            const g = (val ?? "").toString().trim().toUpperCase();
-            td.textContent = g || "—";
-            if (g) td.classList.add(`grade-${g}`);
+          const val = (col.key === "__index") ? (idx + 1) : row?.[col.key];
+
+          if (col.bool01) {
+            const b = fmtBool01(val);
+            td.textContent = b.text;
+            if (b.cls) td.classList.add(b.cls);
           } else {
             td.textContent = (val === null || val === undefined || val === "") ? "—" : String(val);
           }
@@ -717,29 +722,22 @@
       const filterEl = document.getElementById("filterInput");
       const sortEl = document.getElementById("sortSelect");
 
-      const filterText = (filterEl?.value ?? "").trim().toLowerCase();
-      const sortKey = (sortEl?.value ?? "").trim();
+      const filterText = (filterEl.value || "").trim();
+      const sortKey = (sortEl.value || "").trim();
+
       const base = Array.isArray(window.DS) ? window.DS : [];
 
       let result = base;
-      if (filterText) result = base.filter(d => (d?.name ?? "").toLowerCase().includes(filterText));
+
+      if (filterText) {
+        result = base.filter(d => String(d.id).includes(filterText));
+      }
 
       if (sortKey) {
         const copy = [...result];
-        const gradeRank = { A: 1, B: 2, C: 3, D: 4 };
-
         copy.sort((a, b) => {
           const av = a?.[sortKey];
           const bv = b?.[sortKey];
-
-          if (sortKey === "name") {
-            return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
-          }
-          if (sortKey === "grade") {
-            const ar = gradeRank[String(av ?? "").toUpperCase()] ?? 999;
-            const br = gradeRank[String(bv ?? "").toUpperCase()] ?? 999;
-            return ar - br;
-          }
 
           const an = Number(av);
           const bn = Number(bv);
@@ -752,7 +750,6 @@
 
           return String(av ?? "").localeCompare(String(bv ?? ""), undefined, { sensitivity: "base" });
         });
-
         result = copy;
       }
 
@@ -760,23 +757,20 @@
     }
 
     function resetTable() {
-      const filterEl = document.getElementById("filterInput");
-      const sortEl = document.getElementById("sortSelect");
-      if (filterEl) filterEl.value = "";
-      if (sortEl) sortEl.value = "";
-      renderTable(Array.isArray(window.DS) ? window.DS : []);
+      document.getElementById("filterInput").value = "";
+      document.getElementById("sortSelect").value = "";
+      renderTable(window.DS);
     }
 
     function wireDatasetControls() {
       const filterEl = document.getElementById("filterInput");
       const sortEl = document.getElementById("sortSelect");
 
-      if (filterEl) {
-        filterEl.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") applyFilterSort();
-        });
-      }
-      if (sortEl) sortEl.addEventListener("change", () => applyFilterSort());
+      filterEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") applyFilterSort();
+      });
+
+      sortEl.addEventListener("change", () => applyFilterSort());
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -794,14 +788,16 @@
     function drawBarChart(canvasId, data) {
       if (window.CHARTS[canvasId]) window.CHARTS[canvasId].destroy();
 
-      const sorted = [...data].sort((a, b) => a.studyHours - b.studyHours);
-      const labels = sorted.map(d => d.name.split(" ")[0]);
-      const scores = sorted.map(d => d.score);
-      const hours = sorted.map(d => d.studyHours);
+      const topN = 15;
+      const sorted = [...data]
+        .sort((a, b) => b.battery_power - a.battery_power)
+        .slice(0, topN)
+        .sort((a, b) => a.battery_power - b.battery_power);
+
+      const labels = sorted.map(d => `ID ${d.id}`);
+      const values = sorted.map(d => d.battery_power);
 
       const canvas = document.getElementById(canvasId);
-      if (!canvas) return;
-
       const ctx = canvas.getContext("2d");
       const defaults = getChartDefaults();
 
@@ -809,65 +805,56 @@
         type: "bar",
         data: {
           labels,
-          datasets: [
-            {
-              label: "Final Score",
-              data: scores,
-              backgroundColor: "rgba(211, 155, 16, 0.55)",
-              borderColor: "#d39b10",
-              borderWidth: 1,
-              borderRadius: 6,
-              order: 1
-            },
-            {
-              label: "Study Hours",
-              data: hours,
-              backgroundColor: "rgba(14, 165, 166, 0.45)",
-              borderColor: "#0ea5a6",
-              borderWidth: 1,
-              borderRadius: 6,
-              order: 2
-            }
-          ]
+          datasets: [{
+            label: "Battery (mAh)",
+            data: values,
+            backgroundColor: "rgba(211, 155, 16, 0.55)",
+            borderColor: "#d39b10",
+            borderWidth: 1,
+            borderRadius: 8
+          }]
         },
         options: {
           ...defaults,
           scales: {
             ...defaults.scales,
-            y: { ...defaults.scales.y, min: 0, max: 100 }
+            y: {
+              ...defaults.scales.y,
+              title: { display: true, text: "mAh", color: "#55627a", font: { family: "Courier Prime", size: 11 } }
+            },
+            x: {
+              ...defaults.scales.x,
+              title: { display: true, text: "Phones (Top battery, sorted)", color: "#55627a", font: { family: "Courier Prime", size: 11 } }
+            }
           }
         }
       });
-
-      setDisplay("barPlaceholder", "none");
-      canvas.style.display = "block";
     }
 
     function drawScatterPlot(canvasId, data) {
       if (window.CHARTS[canvasId]) window.CHARTS[canvasId].destroy();
 
-      const points = data.map(d => ({ x: d.attendance, y: d.score, name: d.name.split(" ")[0] }));
+      const points = data.map(d => ({ x: d.int_memory, y: d.battery_power, id: d.id }));
 
-      const xVals = data.map(d => d.attendance);
-      const yVals = data.map(d => d.score);
-
-      const canvas = document.getElementById(canvasId);
-      if (!canvas) return;
+      const xVals = data.map(d => d.int_memory);
+      const yVals = data.map(d => d.battery_power);
 
       const xMean = xVals.reduce((a, b) => a + b, 0) / xVals.length;
       const yMean = yVals.reduce((a, b) => a + b, 0) / yVals.length;
+
       const num = xVals.reduce((sum, x, i) => sum + (x - xMean) * (yVals[i] - yMean), 0);
       const den = xVals.reduce((sum, x) => sum + (x - xMean) ** 2, 0);
-      const slope = num / den;
+      const slope = den === 0 ? 0 : (num / den);
       const intercept = yMean - slope * xMean;
 
       const minX = Math.min(...xVals);
       const maxX = Math.max(...xVals);
       const trendLine = [
-        { x: minX, y: parseFloat((slope * minX + intercept).toFixed(2)) },
-        { x: maxX, y: parseFloat((slope * maxX + intercept).toFixed(2)) }
+        { x: minX, y: slope * minX + intercept },
+        { x: maxX, y: slope * maxX + intercept }
       ];
 
+      const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext("2d");
       const defaults = getChartDefaults();
 
@@ -876,7 +863,7 @@
         data: {
           datasets: [
             {
-              label: "Students",
+              label: "Phones",
               data: points,
               backgroundColor: "rgba(14, 165, 166, 0.70)",
               borderColor: "#0ea5a6",
@@ -885,14 +872,13 @@
               order: 2
             },
             {
-              label: "Trend Line",
+              label: "Trend",
               data: trendLine,
               type: "line",
               borderColor: "rgba(211, 155, 16, 0.85)",
               borderWidth: 2,
               borderDash: [6, 4],
               pointRadius: 0,
-              fill: false,
               tension: 0,
               order: 1
             }
@@ -908,7 +894,7 @@
                 label: (ctx) => {
                   if (ctx.datasetIndex === 0) {
                     const p = ctx.raw;
-                    return `${p.name} — Attendance: ${p.x}% | Score: ${p.y}`;
+                    return `ID ${p.id} — Mem: ${p.x} GB | Battery: ${p.y} mAh`;
                   }
                   return null;
                 }
@@ -917,51 +903,57 @@
           },
           scales: {
             ...defaults.scales,
-            x: { ...defaults.scales.x, min: 50, max: 100 },
-            y: { ...defaults.scales.y, min: 40, max: 100 }
+            x: {
+              ...defaults.scales.x,
+              title: { display: true, text: "Internal Memory (GB)", color: "#55627a", font: { family: "Courier Prime", size: 11 } }
+            },
+            y: {
+              ...defaults.scales.y,
+              title: { display: true, text: "Battery (mAh)", color: "#55627a", font: { family: "Courier Prime", size: 11 } }
+            }
           }
         }
       });
-
-      setDisplay("scatterPlaceholder", "none");
-      canvas.style.display = "block";
     }
 
     function drawHistogram(canvasId, data) {
       if (window.CHARTS[canvasId]) window.CHARTS[canvasId].destroy();
 
-      const binEdges = [40, 50, 60, 70, 80, 90, 101];
-      const binLabels = ["40s", "50s", "60s", "70s", "80s", "90s+"];
-      const counts = new Array(binLabels.length).fill(0);
+      const bins = [
+        { label: "< 800",   min: -Infinity, max: 800 },
+        { label: "800–999", min: 800,       max: 1000 },
+        { label: "1000–1199", min: 1000,    max: 1200 },
+        { label: "1200–1399", min: 1200,    max: 1400 },
+        { label: "1400–1599", min: 1400,    max: 1600 },
+        { label: "1600–1799", min: 1600,    max: 1800 },
+        { label: "1800+",   min: 1800,      max: Infinity }
+      ];
+
+      const counts = bins.map(() => 0);
 
       data.forEach(d => {
-        for (let i = 0; i < binEdges.length - 1; i++) {
-          if (d.score >= binEdges[i] && d.score < binEdges[i + 1]) {
-            counts[i]++;
-            break;
-          }
-        }
+        const v = d.battery_power;
+        const idx = bins.findIndex(b => v >= b.min && v < b.max);
+        if (idx >= 0) counts[idx]++;
       });
 
       const canvas = document.getElementById(canvasId);
-      if (!canvas) return;
-
       const ctx = canvas.getContext("2d");
       const defaults = getChartDefaults();
 
       window.CHARTS[canvasId] = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: binLabels,
+          labels: bins.map(b => b.label),
           datasets: [{
-            label: "Number of Students",
+            label: "Count",
             data: counts,
             backgroundColor: "rgba(224, 82, 100, 0.55)",
             borderColor: "#e05264",
             borderWidth: 1,
-            borderRadius: 6,
+            borderRadius: 8,
             barPercentage: 1.0,
-            categoryPercentage: 1.0
+            categoryPercentage: 0.9
           }]
         },
         options: {
@@ -970,40 +962,36 @@
             ...defaults.scales,
             y: {
               ...defaults.scales.y,
-              min: 0,
-              ticks: { ...defaults.scales.y.ticks, stepSize: 1, precision: 0 }
+              beginAtZero: true,
+              ticks: { ...defaults.scales.y.ticks, stepSize: 1 }
+            },
+            x: {
+              ...defaults.scales.x,
+              title: { display: true, text: "Battery Range (mAh)", color: "#55627a", font: { family: "Courier Prime", size: 11 } }
             }
           }
         }
       });
-
-      setDisplay("histPlaceholder", "none");
-      canvas.style.display = "block";
     }
 
     function drawPieChart(canvasId, data) {
       if (window.CHARTS[canvasId]) window.CHARTS[canvasId].destroy();
 
-      const gradeCounts = { A: 0, B: 0, C: 0, D: 0 };
-      data.forEach(d => { if (gradeCounts[d.grade] !== undefined) gradeCounts[d.grade]++; });
-
-      const labels = ["A", "B", "C", "D"];
-      const counts = labels.map(g => gradeCounts[g]);
-      const total = counts.reduce((a, b) => a + b, 0);
+      const yes = data.filter(d => d.four_g === 1).length;
+      const no = data.filter(d => d.four_g === 0).length;
+      const total = yes + no;
 
       const canvas = document.getElementById(canvasId);
-      if (!canvas) return;
-
       const ctx = canvas.getContext("2d");
       const defaults = getChartDefaults();
 
       window.CHARTS[canvasId] = new Chart(ctx, {
         type: "doughnut",
         data: {
-          labels,
+          labels: ["4G: Yes", "4G: No"],
           datasets: [{
-            data: counts,
-            backgroundColor: ["#22c55e", "#d39b10", "#0ea5a6", "#e05264"],
+            data: [yes, no],
+            backgroundColor: ["rgba(14,165,166,0.85)", "rgba(224,82,100,0.80)"],
             borderColor: "#ffffff",
             borderWidth: 3,
             hoverOffset: 8
@@ -1019,17 +1007,14 @@
               ...defaults.plugins.tooltip,
               callbacks: {
                 label: (ctx) => {
-                  const pct = ((ctx.raw / total) * 100).toFixed(1);
-                  return `Grade ${ctx.label}: ${ctx.raw} (${pct}%)`;
+                  const pct = total === 0 ? 0 : ((ctx.raw / total) * 100).toFixed(1);
+                  return `${ctx.label}: ${ctx.raw} (${pct}%)`;
                 }
               }
             }
           }
         }
       });
-
-      setDisplay("piePlaceholder", "none");
-      canvas.style.display = "block";
     }
 
     function getChartDefaults() {
@@ -1087,8 +1072,8 @@
     }
 
     function variance(arr) {
-      const μ = mean(arr);
-      const sumSqDiff = arr.reduce((acc, val) => acc + (val - μ) ** 2, 0);
+      const mu = mean(arr);
+      const sumSqDiff = arr.reduce((acc, val) => acc + (val - mu) ** 2, 0);
       return parseFloat((sumSqDiff / arr.length).toFixed(2));
     }
 
@@ -1121,28 +1106,28 @@
 
     function renderStats(data) {
       try {
-        const scores = data.map(d => d.score);
-        const hours = data.map(d => d.studyHours);
+        const battery = data.map(d => d.battery_power);
+        const mem = data.map(d => d.int_memory);
 
-        document.getElementById("statMean").textContent = mean(scores);
-        document.getElementById("statMedian").textContent = median(scores);
-        document.getElementById("statStdDev").textContent = stdDev(scores);
-        document.getElementById("statMode").textContent = mode(scores);
+        document.getElementById("statMean").textContent = mean(battery);
+        document.getElementById("statMedian").textContent = median(battery);
+        document.getElementById("statStdDev").textContent = stdDev(battery);
+        document.getElementById("statMode").textContent = mode(battery);
 
-        const minVal = Math.min(...scores);
-        const maxVal = Math.max(...scores);
+        const minVal = Math.min(...battery);
+        const maxVal = Math.max(...battery);
 
-        document.getElementById("dCount").textContent = scores.length;
+        document.getElementById("dCount").textContent = battery.length;
         document.getElementById("dMin").textContent = minVal;
         document.getElementById("dMax").textContent = maxVal;
         document.getElementById("dRange").textContent = maxVal - minVal;
-        document.getElementById("dVariance").textContent = variance(scores);
-        document.getElementById("dStdDev").textContent = stdDev(scores);
+        document.getElementById("dVariance").textContent = variance(battery);
+        document.getElementById("dStdDev").textContent = stdDev(battery);
 
-        const r = pearsonCorr(hours, scores);
-        const reg = linearRegression(hours, scores);
+        const r = pearsonCorr(mem, battery);
+        const reg = linearRegression(mem, battery);
+
         const absR = Math.abs(r);
-
         const strength = absR >= 0.7 ? "Strong" : absR >= 0.4 ? "Moderate" : "Weak";
         const direction = r >= 0 ? "Positive" : "Negative";
 
@@ -1151,7 +1136,7 @@
         document.getElementById("rSlope").textContent = reg.slope;
         document.getElementById("rIntercept").textContent = reg.intercept;
         document.getElementById("rSquared").textContent = reg.rSquared;
-        document.getElementById("rEquation").textContent = `score = ${reg.slope}·hours + ${reg.intercept}`;
+        document.getElementById("rEquation").textContent = `battery_power = ${reg.slope}·int_memory + ${reg.intercept}`;
       } catch (err) {
         console.error("renderStats() error:", err);
       }
